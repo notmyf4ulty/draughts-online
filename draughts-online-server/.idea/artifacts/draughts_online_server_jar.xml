@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="draughts-online-server:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/draughts_online_server_jar</output-path>
+    <root id="archive" name="draughts-online-server.jar">
+      <element id="module-output" name="draughts-online-server" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

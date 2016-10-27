@@ -36,30 +36,59 @@ import java.io.*;
 public class App {
     public static void main(String[] args) throws IOException {
 
-        if (args.length != 1) {
-            System.err.println("Usage: java App <port number>");
-            System.exit(1);
+        int portNumber = 10001;
+
+        ServerSocket serverSocket =
+                new ServerSocket(portNumber);
+
+        while (true) {
+            Socket clientSocket_1 = serverSocket.accept();
+            Socket clientSocket_2 = serverSocket.accept();
+
+            MyThread thread_1 = new MyThread(clientSocket_1, clientSocket_2, portNumber);
+            System.out.println("Client 1 connected.");
+            MyThread thread_2 = new MyThread(clientSocket_2, clientSocket_1, portNumber);
+            System.out.println("Client 2 connected.");
+
+
+            thread_1.start();
+            thread_2.start();
+        }
+    }
+
+    public static class MyThread extends Thread {
+        private Socket mySocket;
+        private Socket herSocket;
+        private int portNumber;
+
+        public MyThread(Socket mySocket, Socket herSocket, int portNumber) {
+            this.mySocket = mySocket;
+            this.herSocket = herSocket;
+            this.portNumber = portNumber;
         }
 
-        int portNumber = Integer.parseInt(args[0]);
-
-        try (
-                ServerSocket serverSocket =
-                        new ServerSocket(Integer.parseInt(args[0]));
-                Socket clientSocket = serverSocket.accept();
-                PrintWriter out =
-                        new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
-        ) {
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                out.println(inputLine);
+        @Override
+        public void run() {
+            try (
+                    PrintWriter out =
+                            new PrintWriter(herSocket.getOutputStream(), true);
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(mySocket.getInputStream()))
+            ) {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    out.println(inputLine);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("Exception caught when trying to listen on port "
+                        + portNumber + " or listening for a connection");
+                System.out.println(e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println("Exception caught when trying to listen on port "
-                    + portNumber + " or listening for a connection");
-            System.out.println(e.getMessage());
         }
     }
 }
