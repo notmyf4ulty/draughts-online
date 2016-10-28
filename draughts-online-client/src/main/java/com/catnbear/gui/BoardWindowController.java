@@ -1,38 +1,54 @@
 package com.catnbear.gui;
 
+import com.catnbear.model.game.BoardModel;
+import com.catnbear.model.game.Field;
 import javafx.fxml.FXML;
 import javafx.scene.layout.*;
+
+import java.util.List;
 
 public class BoardWindowController {
 
     @FXML
-    VBox mainPane;
+    private VBox mainPane;
+
+    private BoardModel boardModel;
+    private GridPane board;
 
     @FXML
     private void initialize() {
+        boardModel = BoardModel.getInstance();
         generateBoard();
     }
 
     public void generateBoard() {
-        final int BOARD_DIMENSION = 8;
         final int FIELD_SIDE_LENGTH = 50;
-        final String EVEN_FIELD_STYLE = "-fx-background-color: white;";
-        final String ODD_FIELD_STYLE = "-fx-background-color: gray;";
+        final String FIELD_COLOR_1_STYLE = "-fx-background-color: white;";
+        final String FIELD_COLOR_2_STYLE = "-fx-background-color: gray;";
+        board = new GridPane();
 
-        GridPane gridPane = new GridPane();
-        for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
-            for (int j = 0 ; j < BOARD_DIMENSION ; j++) {
+        boardModel.getBoard();
+
+        for (List<Field> fields : boardModel.getBoard()) {
+            for (Field field : fields) {
                 StackPane stackPane = new StackPane();
                 stackPane.setPrefWidth(FIELD_SIDE_LENGTH);
                 stackPane.setPrefHeight(FIELD_SIDE_LENGTH);
-                if ((i + j) % 2 == 0) {
-                    stackPane.setStyle(EVEN_FIELD_STYLE);
-                } else {
-                    stackPane.setStyle(ODD_FIELD_STYLE);
+                switch (field.getFieldColor()) {
+                    case COLOR_1:
+                        stackPane.setStyle(FIELD_COLOR_1_STYLE);
+                        break;
+                    case COLOR_2:
+                        stackPane.setStyle(FIELD_COLOR_2_STYLE);
+                        break;
                 }
-                gridPane.add(stackPane,i,j);
+                board.add(stackPane,field.getPosition().getX(),field.getPosition().getY());
             }
         }
-        mainPane.getChildren().add(gridPane);
+        mainPane.getChildren().add(board);
+    }
+
+    private void fillBoardWithDraught() {
+
     }
 }
