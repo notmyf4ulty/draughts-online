@@ -2,4 +2,7 @@ draughts-online-server/.idea/workspace.xml
 draughts-online-server/.idea/tasks.xml
 draughts-online-client/.idea/workspace.xml
 draughts-online-client/.idea/tasks.xml
-
+draughts-online-client/out
+draughts-online-server/out
+draughts-online-client/target
+draughts-online-server/target

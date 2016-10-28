@@ -1,7 +1,0 @@
-<?import javafx.scene.layout.BorderPane?>
-
-<BorderPane xmlns:fx="http://javafx.com/fxml">
-    <center>
-        <fx:include source="boardwindow.fxml"/>
-    </center>
-</BorderPane>
