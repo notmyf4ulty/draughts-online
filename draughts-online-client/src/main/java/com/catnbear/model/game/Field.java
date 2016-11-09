@@ -1,9 +1,13 @@
 package com.catnbear.model.game;
 
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * Created by przemek on 28.10.16.
  */
-public class Field {
+public class Field extends Observable {
 
     public enum FieldColor {
         COLOR_1,
@@ -11,21 +15,13 @@ public class Field {
     }
 
     private final FieldColor fieldColor;
-    private boolean occupied;
+    private Piece piece;
     private final Position position;
 
     public Field(FieldColor fieldColor, Position position) {
         this.fieldColor = fieldColor;
-        this.occupied = false;
+        this.piece = null;
         this.position = position;
-    }
-
-    public boolean isOccupied() {
-        return occupied;
-    }
-
-    public void setOccupied(boolean occupied) {
-        this.occupied = occupied;
     }
 
     public FieldColor getFieldColor() {
