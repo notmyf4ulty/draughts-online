@@ -7,8 +7,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
-
 public class BoardWindowController {
 
     @FXML
@@ -20,10 +18,10 @@ public class BoardWindowController {
     @FXML
     private void initialize() {
         boardModel = BoardModel.getInstance();
-        generateBoard();
+        createBoard();
     }
 
-    public void generateBoard() {
+    public void createBoard() {
         final int FIELD_SIDE_LENGTH = 50;
         final String FIELD_COLOR_1_STYLE = "-fx-background-color: white;";
         final String FIELD_COLOR_2_STYLE = "-fx-background-color: gray;";
@@ -31,7 +29,7 @@ public class BoardWindowController {
 
         boardModel.getBoard();
 
-        for (List<Field> fields : boardModel.getBoard()) {
+        for (Field [] fields : boardModel.getBoard()) {
             for (Field field : fields) {
                 StackPane stackPane = new StackPane();
                 stackPane.setPrefWidth(FIELD_SIDE_LENGTH);

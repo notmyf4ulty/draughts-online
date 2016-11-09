@@ -1,20 +1,13 @@
 package com.catnbear.model.game;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-/**
- * Created by przemek on 28.10.16.
- */
 public class BoardModel {
     private static final int BOARD_DIMENSION = 8;
 
     private static BoardModel instance;
-    private final List<List<Field>> board;
+    private final Field [][] board;
 
     private BoardModel() {
-        board = fillBoard();
+        board = createBoard();
     }
 
     public static BoardModel getInstance() {
@@ -24,25 +17,26 @@ public class BoardModel {
         return instance;
     }
 
-    private List<List<Field>> fillBoard() {
-        List<List<Field>> board = new ArrayList<>();
-        for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
-            ArrayList<Field> fields = new ArrayList<>();
-            for (int j = 0 ; j < BOARD_DIMENSION ; j++) {
-                Field field;
-                if ((i + j) % 2 == 0) {
-                    field = new Field(Field.FieldColor.COLOR_1, new Position(i,j));
+    private Field[][] createBoard() {
+        Field [][] board = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
+        for (int i = 0 ; i < board.length ; i++) {
+            for (int j = 0 ; j < board[i].length ; j++) {
+                Position position = new Position(i,j);
+                if (isFieldWhite(position)) {
+                    board[i][j] = new Field(Field.FieldColor.COLOR_1, position);
                 } else {
-                    field = new Field(Field.FieldColor.COLOR_2, new Position(i,j));
+                    board[i][j] = new Field(Field.FieldColor.COLOR_2, position);
                 }
-                fields.add(field);
             }
-            board.add(fields);
         }
         return board;
     }
 
-    public List<List<Field>> getBoard() {
+    private boolean isFieldWhite(Position position) {
+        return (((position.getX() + position.getY()) % 2) == 0);
+    }
+
+    public Field[][] getBoard() {
         return board;
     }
 }
