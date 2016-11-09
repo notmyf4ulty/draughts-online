@@ -3,18 +3,10 @@ package com.catnbear.model.game;
 public class BoardModel {
     private static final int BOARD_DIMENSION = 8;
 
-    private static BoardModel instance;
     private final Field [][] board;
 
-    private BoardModel() {
+    public BoardModel() {
         board = createBoard();
-    }
-
-    public static BoardModel getInstance() {
-        if (instance == null) {
-            instance = new BoardModel();
-        }
-        return instance;
     }
 
     private Field[][] createBoard() {
@@ -36,7 +28,11 @@ public class BoardModel {
         return (((position.getX() + position.getY()) % 2) == 0);
     }
 
-    public Field[][] getBoard() {
+    public Field[][] getFields() {
         return board;
+    }
+
+    public Field getField(Position position) {
+        return board[position.getX()][position.getY()];
     }
 }

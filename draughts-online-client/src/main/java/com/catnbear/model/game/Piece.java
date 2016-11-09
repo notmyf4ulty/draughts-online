@@ -8,6 +8,7 @@ public class Piece {
     }
 
     public enum PieceType {
+        NONE,
         MEN,
         KING;
     }
@@ -19,6 +20,30 @@ public class Piece {
     public Piece(PieceType type, PieceOwner owner, Position position) {
         this.type = type;
         this.owner = owner;
+        this.position = position;
+    }
+
+    public PieceType getType() {
+        return type;
+    }
+
+    public void setType(PieceType type) {
+        this.type = type;
+    }
+
+    public PieceOwner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(PieceOwner owner) {
+        this.owner = owner;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
         this.position = position;
     }
 }
