@@ -1,8 +1,11 @@
 package com.catnbear.model.game;
 
-public class Piece {
+import java.util.Observable;
+
+public class Piece extends Observable {
 
     public enum PieceOwner {
+        NONE,
         PLAYER_1,
         PLAYER_2;
     }

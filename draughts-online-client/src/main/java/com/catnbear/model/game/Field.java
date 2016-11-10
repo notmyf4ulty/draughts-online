@@ -31,4 +31,12 @@ public class Field extends Observable {
     public Position getPosition() {
         return position;
     }
+
+    public boolean containsPiece() {
+        return piece != null;
+    }
+
+    public Piece getPiece() {
+        return piece;
+    }
 }

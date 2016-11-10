@@ -1,5 +1,7 @@
 package com.catnbear.model.game;
 
+import java.util.Map;
+
 public class BoardModel {
     private static final int BOARD_DIMENSION = 8;
 
