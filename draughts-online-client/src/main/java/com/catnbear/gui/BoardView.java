@@ -27,29 +27,32 @@ public class BoardView extends GridPane {
 
         for (Field[] fields : boardModel.getFields()) {
             for (Field field : fields) {
-                StackPane stackPane = new StackPane();
-                stackPane.setPrefWidth(FIELD_SIDE_LENGTH);
-                stackPane.setPrefHeight(FIELD_SIDE_LENGTH);
-                switch (field.getFieldColor()) {
-                    case COLOR_1:
-                        stackPane.setStyle(FIELD_COLOR_1_STYLE);
-                        break;
-                    case COLOR_2:
-                        stackPane.setStyle(FIELD_COLOR_2_STYLE);
-                        if (field.getPosition().getY() < 3) {
-                            Circle circle = new Circle(stackPane.getPrefHeight() / 2 - 2);
-                            circle.setFill(Paint.valueOf("black"));
-                            circle.setVisible(true);
-                            stackPane.getChildren().add(circle);
-                        } else if (field.getPosition().getY() > 4) {
-                            Circle circle = new Circle(stackPane.getPrefHeight() / 2 - 2);
-                            circle.setFill(Paint.valueOf("white"));
-                            circle.setVisible(true);
-                            stackPane.getChildren().add(circle);
-                        }
-                        break;
-                }
-                boardGrid.add(stackPane,field.getPosition().getX(),field.getPosition().getY());
+                FieldPane fieldPane = new FieldPane();
+                fieldPane.setPrefWidth(FIELD_SIDE_LENGTH);
+                fieldPane.setPrefHeight(FIELD_SIDE_LENGTH);
+                fieldPane.createPiece();
+                fieldPane.setField(field);
+                field.addObserver(fieldPane);
+//                switch (field.getFieldColor()) {
+//                    case COLOR_1:
+//                        fieldPane.setStyle(FIELD_COLOR_1_STYLE);
+//                        break;
+//                    case COLOR_2:
+//                        fieldPane.setStyle(FIELD_COLOR_2_STYLE);
+//                        if (field.getPosition().getY() < 3) {
+//                            Circle circle = new Circle(fieldPane.getPrefHeight() / 2 - 2);
+//                            circle.setFill(Paint.valueOf("black"));
+//                            circle.setVisible(true);
+//                            fieldPane.getChildren().add(circle);
+//                        } else if (field.getPosition().getY() > 4) {
+//                            Circle circle = new Circle(fieldPane.getPrefHeight() / 2 - 2);
+//                            circle.setFill(Paint.valueOf("white"));
+//                            circle.setVisible(true);
+//                            fieldPane.getChildren().add(circle);
+//                        }
+//                        break;
+//                }
+                boardGrid.add(fieldPane,field.getPosition().getX(),field.getPosition().getY());
             }
         }
         return boardGrid;

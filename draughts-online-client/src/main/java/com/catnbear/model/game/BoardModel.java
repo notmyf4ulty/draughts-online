@@ -18,6 +18,9 @@ public class BoardModel {
                 Position position = new Position(i,j);
                 if (isFieldWhite(position)) {
                     board[i][j] = new Field(Field.FieldColor.COLOR_1, position);
+                    board[i][j].setPiece(new Piece(Piece.PieceType.MEN,
+                            Piece.PieceOwner.PLAYER_1,
+                            position));
                 } else {
                     board[i][j] = new Field(Field.FieldColor.COLOR_2, position);
                 }
