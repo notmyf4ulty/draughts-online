@@ -16,17 +16,29 @@ public class BoardModel {
         for (int i = 0 ; i < board.length ; i++) {
             for (int j = 0 ; j < board[i].length ; j++) {
                 Position position = new Position(i,j);
-                if (isFieldWhite(position)) {
-                    board[i][j] = new Field(Field.FieldColor.COLOR_1, position);
-                    board[i][j].setPiece(new Piece(Piece.PieceType.MEN,
-                            Piece.PieceOwner.PLAYER_1,
-                            position));
-                } else {
-                    board[i][j] = new Field(Field.FieldColor.COLOR_2, position);
-                }
+                board[i][j] = setInitialConfiguration(position);
             }
         }
         return board;
+    }
+
+    private Field setInitialConfiguration(Position position) {
+        Field field;
+        if (position.isXySumEven()) {
+            field = new Field(Field.FieldColor.COLOR_1,position);
+            if (position.getY() < 3) {
+                field.setPiece(new Piece(Piece.PieceType.MEN,
+                        Piece.PieceOwner.PLAYER_1,
+                        position));
+            } else if (position.getY() > 4) {
+                field.setPiece(new Piece(Piece.PieceType.MEN,
+                        Piece.PieceOwner.PLAYER_2,
+                        position));
+            }
+        } else {
+            field = new Field(Field.FieldColor.COLOR_2,position);
+        }
+        return field;
     }
 
     private boolean isFieldWhite(Position position) {

@@ -11,8 +11,8 @@ import java.util.Observer;
 public class FieldPane extends StackPane implements Observer {
     final String FIELD_COLOR_1_STYLE = "-fx-background-color: #c5925e;";
     final String FIELD_COLOR_2_STYLE = "-fx-background-color: #9f5000;";
-    final String PIECE_COLOR_1_STYLE = "-fx-background-color: black;";
-    final String PIECE_COLOR_2_STYLE = "-fx-background-color: white;";
+    final String PIECE_COLOR_1_STYLE = "black;";
+    final String PIECE_COLOR_2_STYLE = "white;";
 
     Field field;
     Circle piece;

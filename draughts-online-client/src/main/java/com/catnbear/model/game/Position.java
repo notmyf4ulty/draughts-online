@@ -13,6 +13,10 @@ public class Position {
         this(0,0);
     }
 
+    public boolean isXySumEven() {
+        return (x + y) % 2 == 0;
+    }
+
     public int getX() {
         return x;
     }
