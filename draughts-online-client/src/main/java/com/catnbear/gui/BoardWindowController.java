@@ -23,13 +23,9 @@ public class BoardWindowController {
         createBoard();
     }
 
-    public void createBoard() {
+    private void createBoard() {
         boardView = new BoardView(boardModel);
         boardGrid = boardView.getBoardGrid();
         mainPane.getChildren().add(boardGrid);
-    }
-
-    private void fillBoardWithDraught() {
-
     }
 }

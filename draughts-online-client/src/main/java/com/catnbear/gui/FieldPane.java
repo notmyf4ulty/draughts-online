@@ -11,13 +11,13 @@ import java.util.Observer;
 public class FieldPane extends StackPane implements Observer {
     final String FIELD_COLOR_1_STYLE = "-fx-background-color: #c5925e;";
     final String FIELD_COLOR_2_STYLE = "-fx-background-color: #9f5000;";
-    final String PIECE_COLOR_1_STYLE = "black;";
-    final String PIECE_COLOR_2_STYLE = "white;";
+    final String PIECE_COLOR_1_STYLE = "black";
+    final String PIECE_COLOR_2_STYLE = "white";
 
     Field field;
     Circle piece;
 
-    public FieldPane() {
+    FieldPane() {
         super();
     }
 
@@ -30,15 +30,18 @@ public class FieldPane extends StackPane implements Observer {
         }
     }
 
-    public void createPiece() {
+    private void createPiece() {
         if (piece == null) {
             piece = new Circle(this.getPrefHeight() / 2 - 2);
+            piece.setOnMouseClicked(mouseEvent -> {
+
+            });
             this.getChildren().add(piece);
             setPieceColor();
         }
     }
 
-    public void deletePiece() {
+    private void deletePiece() {
         piece = null;
     }
 
@@ -47,10 +50,10 @@ public class FieldPane extends StackPane implements Observer {
             piece.setVisible(true);
             switch (field.getPiece().getOwner()) {
                 case PLAYER_1:
-                    piece.setFill(Paint.valueOf("black"));
+                    piece.setFill(Paint.valueOf(PIECE_COLOR_1_STYLE));
                     break;
                 case PLAYER_2:
-                    piece.setFill(Paint.valueOf("white"));
+                    piece.setFill(Paint.valueOf(PIECE_COLOR_2_STYLE));
                     break;
                 case NONE:
                     piece.setVisible(false);
@@ -59,7 +62,7 @@ public class FieldPane extends StackPane implements Observer {
         }
     }
 
-    public void bindField(Field field) {
+    void bindField(Field field) {
         this.field = field;
         this.field.addObserver(this);
         update(this.field,null);

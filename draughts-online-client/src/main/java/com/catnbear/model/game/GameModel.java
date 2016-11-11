@@ -18,6 +18,8 @@ public class GameModel {
         return instance;
     }
 
+
+
     public BoardModel getBoardModel() {
         return boardModel;
     }
