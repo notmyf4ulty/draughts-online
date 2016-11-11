@@ -1,5 +1,7 @@
 package com.catnbear.model.game;
 
+import javafx.geometry.Pos;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,8 +46,8 @@ public class BoardModel {
         return field;
     }
 
-    public void selectField() {
-
+    public void selectPiece(Position position) {
+        board.get(position).selectPiece();
     }
 
     public Map<Position, Field> getFields() {

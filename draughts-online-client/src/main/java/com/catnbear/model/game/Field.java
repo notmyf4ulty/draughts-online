@@ -20,6 +20,10 @@ public class Field extends Observable {
         this.position = position;
     }
 
+    public void canSelectPiece() {
+        boardModel.selectPiece(position);
+    }
+
     public void selectPiece() {
 
     }

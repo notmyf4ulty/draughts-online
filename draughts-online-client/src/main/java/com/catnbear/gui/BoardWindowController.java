@@ -13,7 +13,6 @@ public class BoardWindowController {
 
     private GameModel gameModel;
     private BoardModel boardModel;
-    private GridPane boardGrid;
     BoardView boardView;
 
     @FXML
@@ -25,7 +24,6 @@ public class BoardWindowController {
 
     private void createBoard() {
         boardView = new BoardView(boardModel);
-        boardGrid = boardView.getBoardGrid();
-        mainPane.getChildren().add(boardGrid);
+        mainPane.getChildren().add(boardView);
     }
 }
