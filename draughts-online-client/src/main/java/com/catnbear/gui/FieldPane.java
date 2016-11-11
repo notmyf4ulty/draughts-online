@@ -9,6 +9,11 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class FieldPane extends StackPane implements Observer {
+    final String FIELD_COLOR_1_STYLE = "-fx-background-color: #c5925e;";
+    final String FIELD_COLOR_2_STYLE = "-fx-background-color: #9f5000;";
+    final String PIECE_COLOR_1_STYLE = "-fx-background-color: black;";
+    final String PIECE_COLOR_2_STYLE = "-fx-background-color: white;";
+
     Field field;
     Circle piece;
 
@@ -20,7 +25,8 @@ public class FieldPane extends StackPane implements Observer {
     public void update(Observable observable, Object o) {
         if(field.containsPiece()) {
             createPiece();
-            setPieceColor();
+        } else {
+            deletePiece();
         }
     }
 
@@ -28,7 +34,12 @@ public class FieldPane extends StackPane implements Observer {
         if (piece == null) {
             piece = new Circle(this.getPrefHeight() / 2 - 2);
             this.getChildren().add(piece);
+            setPieceColor();
         }
+    }
+
+    public void deletePiece() {
+        piece = null;
     }
 
     private void setPieceColor() {
@@ -52,6 +63,20 @@ public class FieldPane extends StackPane implements Observer {
         this.field = field;
         this.field.addObserver(this);
         update(this.field,null);
+        setColor();
+    }
+
+    private void setColor() {
+        if (field != null) {
+            switch (field.getFieldColor()) {
+                case COLOR_1:
+                    setStyle(FIELD_COLOR_1_STYLE);
+                    break;
+                case COLOR_2:
+                    setStyle(FIELD_COLOR_2_STYLE);
+                    break;
+            }
+        }
     }
 
     public Field getField() {
