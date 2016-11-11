@@ -19,13 +19,14 @@ public class FieldPane extends StackPane implements Observer {
     @Override
     public void update(Observable observable, Object o) {
         if(field.containsPiece()) {
+            createPiece();
             setPieceColor();
         }
     }
 
     public void createPiece() {
-        if (piece != null) {
-            piece = new Circle(this.getPrefHeight());
+        if (piece == null) {
+            piece = new Circle(this.getPrefHeight() / 2 - 2);
             this.getChildren().add(piece);
         }
     }
@@ -45,6 +46,12 @@ public class FieldPane extends StackPane implements Observer {
                     break;
             }
         }
+    }
+
+    public void bindField(Field field) {
+        this.field = field;
+        this.field.addObserver(this);
+        update(this.field,null);
     }
 
     public Field getField() {

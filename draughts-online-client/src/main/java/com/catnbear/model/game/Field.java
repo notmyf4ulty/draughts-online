@@ -36,6 +36,12 @@ public class Field extends Observable {
         return piece != null;
     }
 
+    @Override
+    public synchronized void addObserver(Observer var1) {
+        super.addObserver(var1);
+        var1.update(this,null);
+    }
+
     public Piece getPiece() {
         return piece;
     }

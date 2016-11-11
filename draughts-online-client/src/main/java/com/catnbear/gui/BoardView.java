@@ -30,9 +30,13 @@ public class BoardView extends GridPane {
                 FieldPane fieldPane = new FieldPane();
                 fieldPane.setPrefWidth(FIELD_SIDE_LENGTH);
                 fieldPane.setPrefHeight(FIELD_SIDE_LENGTH);
-                fieldPane.createPiece();
-                fieldPane.setField(field);
-                field.addObserver(fieldPane);
+//                fieldPane.createPiece();
+//                fieldPane.setField(field);
+//                field.addObserver(fieldPane);
+                fieldPane.bindField(field);
+
+                // TU MOŻE BYĆ FAJNY BIND -> fieldPane.bindField(field) i w środku binda robię field.bindObserver(this)
+
 //                switch (field.getFieldColor()) {
 //                    case COLOR_1:
 //                        fieldPane.setStyle(FIELD_COLOR_1_STYLE);
