@@ -34,7 +34,7 @@ public class FieldPane extends StackPane implements Observer {
         if (piece == null) {
             piece = new Circle(this.getPrefHeight() / 2 - 2);
             piece.setOnMouseClicked(mouseEvent -> {
-
+                field.selectPiece();
             });
             this.getChildren().add(piece);
             setPieceColor();

@@ -1,9 +1,6 @@
 package com.catnbear.model.game;
 
-import java.util.Observable;
-import java.util.Observer;
-
-public class BoardModel implements Observer {
+public class BoardModel {
     private static final int BOARD_DIMENSION = 8;
 
     private final Field [][] board;
@@ -39,14 +36,12 @@ public class BoardModel implements Observer {
         } else {
             field = new Field(Field.FieldColor.COLOR_2,position);
         }
-        field.addObserver(this);
+        field.assignToBoard(this);
         return field;
     }
 
-    @Override
-    public void update(Observable observable, Object o) {
-        Field field = (Field) observable;
-        field.selectPiece();
+    public void selectField() {
+
     }
 
     public Field[][] getFields() {

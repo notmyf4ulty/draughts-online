@@ -12,6 +12,7 @@ public class Field extends Observable {
     private final FieldColor fieldColor;
     private Piece piece;
     private final Position position;
+    private BoardModel boardModel;
 
     public Field(FieldColor fieldColor, Position position) {
         this.fieldColor = fieldColor;
@@ -21,6 +22,10 @@ public class Field extends Observable {
 
     public void selectPiece() {
 
+    }
+
+    public void assignToBoard(BoardModel boardModel) {
+        this.boardModel = boardModel;
     }
 
     public FieldColor getFieldColor() {
