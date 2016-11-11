@@ -1,7 +1,5 @@
 package com.catnbear.model.game;
 
-import javafx.geometry.Pos;
-
 import java.util.HashMap;
 import java.util.Map;
 

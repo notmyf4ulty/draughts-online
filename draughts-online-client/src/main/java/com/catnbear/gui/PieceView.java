@@ -2,33 +2,33 @@ package com.catnbear.gui;
 
 import com.catnbear.model.game.Piece;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
-import java.util.Observable;
-import java.util.Observer;
-
-/**
- * Created by przemek on 09.11.16.
- */
-public class PieceView extends Circle implements Observer {
+public class PieceView extends Circle {
     Piece piece;
-    GridPane board;
+    private static final int PIECE_RADIUS = 23;
 
-    public PieceView() {
+    public PieceView(Piece piece) {
         super();
-    }
-
-    public void bindPiece(Piece piece) {
         this.piece = piece;
-        piece.addObserver(this);
+        assignColor(piece.getOwner());
+        setRadius(PIECE_RADIUS);
     }
 
-    public void assignBoard(GridPane board) {
-        this.board = board;
-    }
-
-    @Override
-    public void update(Observable observable, Object o) {
-
+    private void assignColor(Piece.PieceOwner pieceOwner) {
+        String color;
+        switch (pieceOwner) {
+            case PLAYER_1:
+                color = "white";
+                break;
+            case PLAYER_2:
+                color = "black";
+                break;
+            default:
+                color = "";
+                break;
+        }
+        setFill(Paint.valueOf(color));
     }
 }

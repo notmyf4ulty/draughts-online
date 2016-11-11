@@ -7,13 +7,13 @@ public class Piece extends Observable {
     public enum PieceOwner {
         NONE,
         PLAYER_1,
-        PLAYER_2;
+        PLAYER_2
     }
 
     public enum PieceType {
         NONE,
         MEN,
-        KING;
+        KING
     }
 
     private PieceType type;

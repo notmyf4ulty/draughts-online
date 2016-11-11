@@ -10,7 +10,6 @@ public class BoardWindowController {
 
     @FXML
     private VBox mainPane;
-
     private GameModel gameModel;
     private BoardModel boardModel;
     BoardView boardView;
