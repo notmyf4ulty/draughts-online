@@ -12,7 +12,7 @@ public class GameModel {
     private Player activePlayer;
     private StringProperty activePlayerLabelText;
     private boolean moveAvailable;
-    private BoardModel boardModel;
+    private Board board;
     private IntegerProperty roundLabelValue;
 
     private GameModel() {
@@ -57,20 +57,28 @@ public class GameModel {
     }
 
     private void backupBoardModel() {
-        if (boardModel != null) {
-            boardModel.backupBoard();
+        if (board != null) {
+            board.backupBoard();
         }
     }
 
     public void retreiveBackup() {
-        if (boardModel != null) {
-            boardModel.retreiveBackup();
+        if (board != null) {
+            board.retreiveBackup();
         }
         moveAvailable = true;
     }
 
-    public void assignBoardModel(BoardModel boardModel) {
-        this.boardModel = boardModel;
+    public void assignBoardModel(Board board) {
+        this.board = board;
+    }
+
+    public boolean isMoveAvailable() {
+        return moveAvailable;
+    }
+
+    public void setMoveAvailable(boolean moveAvailable) {
+        this.moveAvailable = moveAvailable;
     }
 
     public StringProperty activePlayerLabelTextProperty() {

@@ -2,13 +2,13 @@ package com.catnbear.model.game;
 
 import java.util.*;
 
-public class BoardModel extends Observable {
+public class Board extends Observable {
     private static final int BOARD_DIMENSION = 8;
     private Field [][] board;
     private Field [][] boardBackup;
     private GameModel gameModel;
 
-    public BoardModel() {
+    public Board() {
         board = generateBoard();
         backupBoard();
         gameModel = GameModel.getInstance();
@@ -45,15 +45,17 @@ public class BoardModel extends Observable {
         Player activePlayer = gameModel.getActivePlayer();
         Field selectedField = board[position.getX()][position.getY()];
         Field activePieceField = getFieldOfActivePiece();
-        if (activePieceField != null) {
-            moveActivePiece(activePieceField,selectedField);
-            resetSelection();
-        } else if (selectedField.containsPiece() && selectedField.getPiece().getPlayer().equals(activePlayer)) {
-            resetSelection();
-            selectedField.selectPiece();
+        if (gameModel.isMoveAvailable()) {
+            if (activePieceField != null) {
+                moveActivePiece(activePieceField, selectedField);
+                resetSelection();
+            } else if (selectedField.containsPiece() && selectedField.getPiece().getPlayer().equals(activePlayer)) {
+                resetSelection();
+                selectedField.selectPiece();
+            }
+            setChanged();
+            notifyObservers();
         }
-        setChanged();
-        notifyObservers();
     }
 
 
@@ -69,18 +71,18 @@ public class BoardModel extends Observable {
             Piece piece = fromField.getPiece();
             fromField.resetPiece();
             toField.setPiece(piece);
+            gameModel.setMoveAvailable(false);
+        } else if (canBeatEnemy(fromField, toField)) {
+            int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
+            int y = (toField.getPosition().getY() + fromField.getPosition().getY()) / 2;
+            Field field = board[x][y];
+            field.resetPiece();
+            Piece piece = fromField.getPiece();
+            fromField.resetPiece();
+            toField.setPiece(piece);
+            gameModel.setMoveAvailable(false);
         } else {
-            if (canBeatEnemy(fromField, toField)) {
-                int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
-                int y = (toField.getPosition().getY() + fromField.getPosition().getY()) / 2;
-                Field field = board[x][y];
-                field.resetPiece();
-                Piece piece = fromField.getPiece();
-                fromField.resetPiece();
-                toField.setPiece(piece);
-            } else {
-                fromField.unselectPiece();
-            }
+            fromField.unselectPiece();
         }
     }
 

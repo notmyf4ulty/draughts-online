@@ -1,10 +1,7 @@
 package com.catnbear.gui;
 
-import com.catnbear.model.game.BoardModel;
+import com.catnbear.model.game.Board;
 import com.catnbear.model.game.GameModel;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -21,11 +18,11 @@ public class BoardWindowController {
     private Label roundLabel;
 
     private GameModel gameModel;
-    private BoardModel boardModel;
+    private Board board;
 
     @FXML
     private void initialize() {
-        boardModel = new BoardModel();
+        board = new Board();
         gameModel = GameModel.getInstance();
         activePlayerLabel.textProperty().bind(gameModel.activePlayerLabelTextProperty());
         roundLabel.textProperty().bind(gameModel.roundLabelValueProperty().asString());
@@ -33,7 +30,7 @@ public class BoardWindowController {
     }
 
     private void createBoard() {
-        BoardView boardView = new BoardView(boardModel);
+        BoardView boardView = new BoardView(board);
         boardPane.getChildren().add(boardView);
     }
 

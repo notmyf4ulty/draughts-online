@@ -8,18 +8,18 @@ import java.util.Observable;
 import java.util.Observer;
 
 class BoardView extends GridPane implements Observer {
-    private BoardModel boardModel;
+    private Board board;
 
-    BoardView(BoardModel boardModel) {
+    BoardView(Board board) {
         super();
-        this.boardModel = boardModel;
-        boardModel.addObserver(this);
+        this.board = board;
+        board.addObserver(this);
         createBoard();
         refresh();
     }
 
     private void createBoard() {
-        Field [][] board = boardModel.getBoard();
+        Field [][] board = this.board.getBoard();
         for(Field [] fields : board) {
             for (Field field : fields) {
                 Position position = field.getPosition();
@@ -31,7 +31,7 @@ class BoardView extends GridPane implements Observer {
 
     private void refresh() {
         clearPieces();
-        Field [][] board = boardModel.getBoard();
+        Field [][] board = this.board.getBoard();
         for(Field [] fields : board) {
             for (Field field : fields) {
                 if (field.containsPiece()) {
@@ -55,7 +55,7 @@ class BoardView extends GridPane implements Observer {
         fieldView.setPrefWidth(FIELD_SIDE_LENGTH);
         fieldView.setPrefHeight(FIELD_SIDE_LENGTH);
         fieldView.setColor(position);
-        fieldView.setOnMouseClicked(mouseEvent -> boardModel.clickField(position));
+        fieldView.setOnMouseClicked(mouseEvent -> board.clickField(position));
         return fieldView;
     }
 
