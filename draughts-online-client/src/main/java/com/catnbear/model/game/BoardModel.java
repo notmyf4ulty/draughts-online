@@ -1,9 +1,6 @@
 package com.catnbear.model.game;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Set;
+import java.util.*;
 
 public class BoardModel extends Observable {
     private static final int BOARD_DIMENSION = 8;
@@ -11,12 +8,12 @@ public class BoardModel extends Observable {
     private GameModel gameModel;
 
     public BoardModel() {
-        board = createBoard();
+        board = generateBoard();
         gameModel = GameModel.getInstance();
     }
 
-    private Map<Position,Field> createBoard() {
-        Map<Position,Field> board = new HashMap<>();
+    private Map<Position,Field> generateBoard() {
+        Map<Position,Field> board = new LinkedHashMap<>();
         for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
             for (int j = 0 ; j < BOARD_DIMENSION ; j++) {
                 Position position = new Position(i,j);
@@ -28,20 +25,15 @@ public class BoardModel extends Observable {
     }
 
     private Field setInitialConfiguration(Position position) {
-        Field field;
+        Field field = new Field(position);
         if (position.isXySumEven()) {
-            field = new Field(Field.FieldColor.COLOR_1,position);
             if (position.getY() < 3) {
-                field.setPiece(new Piece(Piece.PieceType.MEN,
-                        Player.PLAYER_1,
-                        position));
+                Piece piece = new Piece(Piece.PieceType.MEN, Player.PLAYER_1);
+                piece.assignField(field);
             } else if (position.getY() > 4) {
-                field.setPiece(new Piece(Piece.PieceType.MEN,
-                        Player.PLAYER_2,
-                        position));
+                Piece piece = new Piece(Piece.PieceType.MEN, Player.PLAYER_2);
+                piece.assignField(field);
             }
-        } else {
-            field = new Field(Field.FieldColor.COLOR_2,position);
         }
         field.assignToBoard(this);
         return field;
@@ -71,7 +63,7 @@ public class BoardModel extends Observable {
         startField.unselectPiece();
         startField.resetPiece();
         Field stopField = board.get(position);
-        piece.setPosition(position);
+//        piece.setPosition(position);
         stopField.setPiece(piece);
         stopField.selectPiece();
     }

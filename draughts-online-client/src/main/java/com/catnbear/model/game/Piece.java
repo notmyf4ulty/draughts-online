@@ -12,13 +12,20 @@ public class Piece extends Observable {
 
     private PieceType type;
     private Player player;
-    private Position position;
     private boolean selected;
+    private Field field;
 
-    public Piece(PieceType type, Player player, Position position) {
+    public Piece(PieceType type, Player player) {
         this.type = type;
         this.player = player;
-        this.position = position;
+    }
+
+    public void assignField(Field field) {
+        if (this.field != null) {
+            this.field.resetPiece();
+        }
+        this.field = field;
+        this.field.setPiece(this);
     }
 
     void select() {
@@ -47,13 +54,5 @@ public class Piece extends Observable {
 
     public void setPlayer(Player player) {
         this.player = player;
-    }
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
     }
 }

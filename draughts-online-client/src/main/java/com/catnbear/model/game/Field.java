@@ -4,24 +4,13 @@ import java.util.Observable;
 
 public class Field extends Observable {
 
-    public enum FieldColor {
-        COLOR_1,
-        COLOR_2;
-    }
-
-    private final FieldColor fieldColor;
     private Piece piece;
     private final Position position;
     private BoardModel boardModel;
 
-    public Field(FieldColor fieldColor, Position position) {
-        this.fieldColor = fieldColor;
+    public Field(Position position) {
         this.piece = null;
         this.position = position;
-    }
-
-    public void canSelectPiece() {
-        boardModel.clickField(position);
     }
 
     public boolean isPieceSelcted() {
@@ -42,10 +31,6 @@ public class Field extends Observable {
 
     public void assignToBoard(BoardModel boardModel) {
         this.boardModel = boardModel;
-    }
-
-    public FieldColor getFieldColor() {
-        return fieldColor;
     }
 
     public Position getPosition() {
