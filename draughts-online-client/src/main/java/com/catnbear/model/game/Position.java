@@ -13,6 +13,10 @@ public class Position {
         this(0,0);
     }
 
+    public boolean isDiagonalNeighbour(Position position) {
+        return (Math.abs(x - position.getX()) == 1) && (Math.abs(y - position.getY()) == 1);
+    }
+
     public boolean isXySumEven() {
         return (x + y) % 2 == 0;
     }

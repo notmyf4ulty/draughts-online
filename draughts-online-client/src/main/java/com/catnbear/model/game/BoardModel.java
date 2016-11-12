@@ -40,32 +40,36 @@ public class BoardModel extends Observable {
     }
 
     public void clickField(Position position) {
-        Field clickedField = board[position.getX()][position.getY()];
         Player activePlayer = gameModel.getActivePlayer();
-        if (isActivePiece() && !clickedField.containsPiece()) {
-            moveActivePiece(position);
+        Field selectedField = board[position.getX()][position.getY()];
+        Field activePieceField = getFieldOfActivePiece();
+        if (activePieceField != null) {
+            moveActivePiece(activePieceField,selectedField);
             resetSelection();
-        } else {
-            if (clickedField.containsPiece() &&
-                    clickedField.getPiece().getPlayer().equals(activePlayer)) {
-                resetSelection();
-                clickedField.selectPiece();
-            }
+        } else if (selectedField.containsPiece() && selectedField.getPiece().getPlayer().equals(activePlayer)) {
+            resetSelection();
+            selectedField.selectPiece();
         }
         setChanged();
         notifyObservers();
     }
 
 
-    private void moveActivePiece(Position position) {
-        Field startField = getFieldOfActivePiece();
-        Piece piece = startField.getPiece();
-        startField.unselectPiece();
-        startField.resetPiece();
-        Field stopField = board[position.getX()][position.getY()];
-//        piece.setPosition(position);
-        stopField.setPiece(piece);
-        stopField.selectPiece();
+    private void moveActivePiece(Field fromField, Field toField) {
+        if (canMoveThere(fromField,toField)) {
+            Piece piece = fromField.getPiece();
+            fromField.resetPiece();
+            toField.setPiece(piece);
+        } else {
+            fromField.unselectPiece();
+        }
+    }
+
+    private boolean canMoveThere(Field fromField, Field toField) {
+        boolean diagonalNeighbourhoodCondition = fromField.getPosition().isDiagonalNeighbour(toField.getPosition());
+        boolean noPieceOnToFieldCondition = !toField.containsPiece();
+
+        return diagonalNeighbourhoodCondition && noPieceOnToFieldCondition;
     }
 
     private Field getFieldOfActivePiece() {
@@ -79,7 +83,7 @@ public class BoardModel extends Observable {
         return null;
     }
 
-    private boolean isActivePiece() {
+    private boolean isPieceActive() {
         return getFieldOfActivePiece() != null;
     }
 
