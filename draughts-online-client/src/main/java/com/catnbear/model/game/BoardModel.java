@@ -1,9 +1,9 @@
 package com.catnbear.model.game;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 public class BoardModel extends Observable {
     private static final int BOARD_DIMENSION = 8;
@@ -48,15 +48,47 @@ public class BoardModel extends Observable {
     }
 
     public void clickField(Position position) {
-        resetSelection();
         Field clickedField = board.get(position);
         Player activePlayer = gameModel.getActivePlayer();
-        if (clickedField.containsPiece() &&
-                clickedField.getPiece().getPlayer().equals(activePlayer)) {
-            clickedField.selectPiece();
+        if (isActivePiece() && !clickedField.containsPiece()) {
+            moveActivePiece(position);
+            resetSelection();
+        } else {
+            if (clickedField.containsPiece() &&
+                    clickedField.getPiece().getPlayer().equals(activePlayer)) {
+                resetSelection();
+                clickedField.selectPiece();
+            }
         }
         setChanged();
         notifyObservers();
+    }
+
+
+    private void moveActivePiece(Position position) {
+        Field startField = getFieldOfActivePiece();
+        Piece piece = startField.getPiece();
+        startField.unselectPiece();
+        startField.resetPiece();
+        Field stopField = board.get(position);
+        piece.setPosition(position);
+        stopField.setPiece(piece);
+        stopField.selectPiece();
+    }
+
+    private Field getFieldOfActivePiece() {
+        Set<Map.Entry<Position, Field>> entries = board.entrySet();
+        for (Map.Entry<Position, Field> positionFieldEntry : entries) {
+            Field field = positionFieldEntry.getValue();
+            if (field.containsPiece() && field.isPieceSelcted()) {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    private boolean isActivePiece() {
+        return getFieldOfActivePiece() != null;
     }
 
     private void resetSelection() {

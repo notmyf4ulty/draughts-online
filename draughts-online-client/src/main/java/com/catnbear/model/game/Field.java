@@ -24,12 +24,20 @@ public class Field extends Observable {
         boardModel.clickField(position);
     }
 
+    public boolean isPieceSelcted() {
+        return piece.isSelected();
+    }
+
     public void selectPiece() {
         piece.select();
     }
 
     public void unselectPiece() {
         piece.unselect();
+    }
+
+    public void resetPiece() {
+        piece = null;
     }
 
     public void assignToBoard(BoardModel boardModel) {

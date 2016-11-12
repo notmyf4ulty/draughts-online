@@ -3,6 +3,7 @@ package com.catnbear.gui;
 import com.catnbear.model.game.*;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -34,12 +35,22 @@ public class BoardView extends GridPane implements Observer {
     }
 
     private void refresh() {
+        clearPieces();
         Iterator iterator = boardModel.getFields().entrySet().iterator();
         while(iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
             Field field = (Field) pair.getValue();
             if (field.containsPiece()) {
                 putPieceView(field.getPosition(), field.getPiece());
+            }
+        }
+        iterator.remove();
+    }
+
+    private void clearPieces() {
+        for(Node node : getChildren()) {
+            if (Pane.class.isAssignableFrom(node.getClass())) {
+                ((Pane)node).getChildren().clear();
             }
         }
     }
