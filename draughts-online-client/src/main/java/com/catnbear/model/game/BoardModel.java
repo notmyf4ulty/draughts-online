@@ -4,7 +4,7 @@ import java.util.*;
 
 public class BoardModel extends Observable {
     private static final int BOARD_DIMENSION = 8;
-    private final Map<Position,Field> board;
+    private final Field [][] board;
     private GameModel gameModel;
 
     public BoardModel() {
@@ -12,13 +12,13 @@ public class BoardModel extends Observable {
         gameModel = GameModel.getInstance();
     }
 
-    private Map<Position,Field> generateBoard() {
-        Map<Position,Field> board = new LinkedHashMap<>();
+    private Field [][] generateBoard() {
+        Field [][] board = new Field [BOARD_DIMENSION][BOARD_DIMENSION];
         for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
             for (int j = 0 ; j < BOARD_DIMENSION ; j++) {
                 Position position = new Position(i,j);
                 Field field = setInitialConfiguration(position);
-                board.put(position,field);
+                board[i][j] = field;
             }
         }
         return board;
@@ -40,7 +40,7 @@ public class BoardModel extends Observable {
     }
 
     public void clickField(Position position) {
-        Field clickedField = board.get(position);
+        Field clickedField = board[position.getX()][position.getY()];
         Player activePlayer = gameModel.getActivePlayer();
         if (isActivePiece() && !clickedField.containsPiece()) {
             moveActivePiece(position);
@@ -62,18 +62,18 @@ public class BoardModel extends Observable {
         Piece piece = startField.getPiece();
         startField.unselectPiece();
         startField.resetPiece();
-        Field stopField = board.get(position);
+        Field stopField = board[position.getX()][position.getY()];
 //        piece.setPosition(position);
         stopField.setPiece(piece);
         stopField.selectPiece();
     }
 
     private Field getFieldOfActivePiece() {
-        Set<Map.Entry<Position, Field>> entries = board.entrySet();
-        for (Map.Entry<Position, Field> positionFieldEntry : entries) {
-            Field field = positionFieldEntry.getValue();
-            if (field.containsPiece() && field.isPieceSelcted()) {
-                return field;
+        for(Field [] fields : board) {
+            for (Field field : fields) {
+                if (field.containsPiece() && field.isPieceSelcted()) {
+                    return field;
+                }
             }
         }
         return null;
@@ -84,19 +84,20 @@ public class BoardModel extends Observable {
     }
 
     private void resetSelection() {
-        for (Map.Entry<Position, Field> positionFieldEntry : board.entrySet()) {
-            Field field = positionFieldEntry.getValue();
-            if (field.containsPiece()) {
-                field.unselectPiece();
+        for (Field[] fields : board) {
+            for (Field field : fields) {
+                if (field.containsPiece()) {
+                    field.unselectPiece();
+                }
             }
         }
     }
 
-    public Map<Position, Field> getFields() {
+    public Field[][] getBoard() {
         return board;
     }
 
     public Field getField(Position position) {
-        return board.get(position);
+        return board[position.getX()][position.getY()];
     }
 }

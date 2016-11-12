@@ -24,27 +24,26 @@ public class BoardView extends GridPane implements Observer {
     }
 
     private void createBoard() {
-        Iterator iterator = boardModel.getFields().entrySet().iterator();
-        while(iterator.hasNext()) {
-            Map.Entry pair = (Map.Entry)iterator.next();
-            Position position = (Position) pair.getKey();
-            FieldView fieldView = createFieldView(position);
-            add(fieldView, position.getX(), position.getY());
+        Field [][] board = boardModel.getBoard();
+        for(Field [] fields : board) {
+            for (Field field : fields) {
+                Position position = field.getPosition();
+                FieldView fieldView = createFieldView(position);
+                add(fieldView, position.getX(), position.getY());
+            }
         }
-        iterator.remove();
     }
 
     private void refresh() {
         clearPieces();
-        Iterator iterator = boardModel.getFields().entrySet().iterator();
-        while(iterator.hasNext()) {
-            Map.Entry pair = (Map.Entry) iterator.next();
-            Field field = (Field) pair.getValue();
-            if (field.containsPiece()) {
-                putPieceView(field.getPosition(), field.getPiece());
+        Field [][] board = boardModel.getBoard();
+        for(Field [] fields : board) {
+            for (Field field : fields) {
+                if (field.containsPiece()) {
+                    putPieceView(field.getPosition(), field.getPiece());
+                }
             }
         }
-        iterator.remove();
     }
 
     private void clearPieces() {
