@@ -4,19 +4,14 @@ import com.catnbear.model.game.*;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-public class BoardView extends GridPane implements Observer {
+class BoardView extends GridPane implements Observer {
     private BoardModel boardModel;
-    private GameModel gameModel;
 
-    public BoardView(BoardModel boardModel) {
+    BoardView(BoardModel boardModel) {
         super();
-        this.gameModel = GameModel.getInstance();
         this.boardModel = boardModel;
         boardModel.addObserver(this);
         createBoard();

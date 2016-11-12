@@ -5,11 +5,11 @@ import com.catnbear.model.game.Player;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
-public class PieceView extends Circle {
-    Piece piece;
+class PieceView extends Circle {
+    private Piece piece;
     private static final int PIECE_RADIUS = 23;
 
-    public PieceView(Piece piece) {
+    PieceView(Piece piece) {
         super();
         this.piece = piece;
         assignColor(piece.getPlayer());

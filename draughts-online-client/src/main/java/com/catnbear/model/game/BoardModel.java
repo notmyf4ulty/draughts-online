@@ -35,7 +35,6 @@ public class BoardModel extends Observable {
                 piece.assignField(field);
             }
         }
-        field.assignToBoard(this);
         return field;
     }
 
@@ -56,7 +55,7 @@ public class BoardModel extends Observable {
 
 
     private void moveActivePiece(Field fromField, Field toField) {
-        if (canMoveThere(fromField,toField)) {
+        if (isMovePossible(fromField,toField)) {
             Piece piece = fromField.getPiece();
             fromField.resetPiece();
             toField.setPiece(piece);
@@ -65,9 +64,10 @@ public class BoardModel extends Observable {
         }
     }
 
-    private boolean canMoveThere(Field fromField, Field toField) {
+    private boolean isMovePossible(Field fromField, Field toField) {
         boolean diagonalNeighbourhoodCondition = fromField.getPosition().isDiagonalNeighbour(toField.getPosition());
         boolean noPieceOnToFieldCondition = !toField.containsPiece();
+
 
         return diagonalNeighbourhoodCondition && noPieceOnToFieldCondition;
     }
@@ -81,10 +81,6 @@ public class BoardModel extends Observable {
             }
         }
         return null;
-    }
-
-    private boolean isPieceActive() {
-        return getFieldOfActivePiece() != null;
     }
 
     private void resetSelection() {
@@ -101,7 +97,4 @@ public class BoardModel extends Observable {
         return board;
     }
 
-    public Field getField(Position position) {
-        return board[position.getX()][position.getY()];
-    }
 }

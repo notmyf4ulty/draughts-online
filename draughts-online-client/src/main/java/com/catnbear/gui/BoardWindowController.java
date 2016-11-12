@@ -16,18 +16,17 @@ public class BoardWindowController {
 
     private GameModel gameModel;
     private BoardModel boardModel;
-    BoardView boardView;
 
     @FXML
     private void initialize() {
         gameModel = GameModel.getInstance();
         boardModel = new BoardModel();
-        activePlayerLabel.textProperty().bind(gameModel.activePlayerPropertyProperty());
+        activePlayerLabel.textProperty().bind(gameModel.activePlayerLabelTextProperty());
         createBoard();
     }
 
     private void createBoard() {
-        boardView = new BoardView(boardModel);
+        BoardView boardView = new BoardView(boardModel);
         boardPane.getChildren().add(boardView);
     }
 

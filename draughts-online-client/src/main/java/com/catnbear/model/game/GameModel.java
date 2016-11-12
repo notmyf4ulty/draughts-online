@@ -8,11 +8,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GameModel {
     private static GameModel instance = null;
     private Player activePlayer;
-    private StringProperty activePlayerProperty;
+    private StringProperty activePlayerLabelText;
 
     private GameModel() {
         activePlayer = drawPlayer();
-        activePlayerProperty = new SimpleStringProperty(activePlayer.toString());
+        activePlayerLabelText = new SimpleStringProperty(activePlayer.toString());
     }
 
     public static GameModel getInstance() {
@@ -22,12 +22,11 @@ public class GameModel {
         return instance;
     }
 
-
     private Player drawPlayer() {
         return (ThreadLocalRandom.current().nextInt(0,2) == 0) ? Player.PLAYER_1 : Player.PLAYER_2;
     }
 
-    public Player getActivePlayer() {
+    Player getActivePlayer() {
         return activePlayer;
     }
 
@@ -37,14 +36,10 @@ public class GameModel {
         } else {
             activePlayer = Player.PLAYER_1;
         }
-        activePlayerProperty.setValue(activePlayer.toString());
+        activePlayerLabelText.setValue(activePlayer.toString());
     }
 
-    public String getActivePlayerProperty() {
-        return activePlayerProperty.get();
-    }
-
-    public StringProperty activePlayerPropertyProperty() {
-        return activePlayerProperty;
+    public StringProperty activePlayerLabelTextProperty() {
+        return activePlayerLabelText;
     }
 }

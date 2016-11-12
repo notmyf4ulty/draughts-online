@@ -4,7 +4,7 @@ import java.util.Observable;
 
 public class Piece extends Observable {
 
-    public enum PieceType {
+    enum PieceType {
         NONE,
         MEN,
         KING
@@ -15,12 +15,12 @@ public class Piece extends Observable {
     private boolean selected;
     private Field field;
 
-    public Piece(PieceType type, Player player) {
+    Piece(PieceType type, Player player) {
         this.type = type;
         this.player = player;
     }
 
-    public void assignField(Field field) {
+    void assignField(Field field) {
         if (this.field != null) {
             this.field.resetPiece();
         }

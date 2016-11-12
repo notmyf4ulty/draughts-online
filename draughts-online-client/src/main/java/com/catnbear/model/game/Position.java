@@ -1,19 +1,15 @@
 package com.catnbear.model.game;
 
 public class Position {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
-    public Position(int x, int y) {
+    Position(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public Position() {
-        this(0,0);
-    }
-
-    public boolean isDiagonalNeighbour(Position position) {
+    boolean isDiagonalNeighbour(Position position) {
         return (Math.abs(x - position.getX()) == 1) && (Math.abs(y - position.getY()) == 1);
     }
 
@@ -25,15 +21,8 @@ public class Position {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
     }
 
-    public void setY(int y) {
-        this.y = y;
-    }
 }
