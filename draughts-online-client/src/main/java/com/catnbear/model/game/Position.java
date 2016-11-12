@@ -9,8 +9,12 @@ public class Position {
         this.y = y;
     }
 
-    boolean isDiagonalNeighbour(Position position) {
+    boolean isOneFieldDiagonalNeighbour(Position position) {
         return (Math.abs(x - position.getX()) == 1) && (Math.abs(y - position.getY()) == 1);
+    }
+
+    boolean isTwoFieldsDiagonalNeighbourhood(Position position) {
+        return (Math.abs(x - position.getX()) == 2) && (Math.abs(y - position.getY()) == 2);
     }
 
     public boolean isXySumEven() {

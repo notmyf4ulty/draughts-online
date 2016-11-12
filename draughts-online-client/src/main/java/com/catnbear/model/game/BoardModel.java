@@ -1,5 +1,7 @@
 package com.catnbear.model.game;
 
+import javafx.geometry.Pos;
+
 import java.util.*;
 
 public class BoardModel extends Observable {
@@ -59,17 +61,40 @@ public class BoardModel extends Observable {
             Piece piece = fromField.getPiece();
             fromField.resetPiece();
             toField.setPiece(piece);
+        } else if (canBeatEnemy(fromField,toField)) {
+            int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
+            int y = (toField.getPosition().getY() + fromField.getPosition().getY()) / 2;
+            Field field = board[x][y];
+            field.resetPiece();
+            Piece piece = fromField.getPiece();
+            fromField.resetPiece();
+            toField.setPiece(piece);
         } else {
             fromField.unselectPiece();
         }
     }
 
     private boolean isMovePossible(Field fromField, Field toField) {
-        boolean diagonalNeighbourhoodCondition = fromField.getPosition().isDiagonalNeighbour(toField.getPosition());
+        boolean diagonalOneFieldNeighbourhoodCondition =
+                fromField.getPosition().isOneFieldDiagonalNeighbour(toField.getPosition());
         boolean noPieceOnToFieldCondition = !toField.containsPiece();
+        return diagonalOneFieldNeighbourhoodCondition && noPieceOnToFieldCondition;
+    }
 
-
-        return diagonalNeighbourhoodCondition && noPieceOnToFieldCondition;
+    private boolean canBeatEnemy(Field fromField, Field toField) {
+        boolean diagonalTwoFieldsNeighbourhoodCondition =
+                fromField.getPosition().isTwoFieldsDiagonalNeighbourhood(toField.getPosition());
+        boolean noPieceOnToFieldCondition = !toField.containsPiece();
+        if (diagonalTwoFieldsNeighbourhoodCondition && noPieceOnToFieldCondition) {
+            Player activePlayer = gameModel.getActivePlayer();
+            int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
+            int y = (toField.getPosition().getY() + fromField.getPosition().getY()) / 2;
+            Field field = board[x][y];
+            if (field.containsPiece() && !field.getPiece().getPlayer().equals(activePlayer)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Field getFieldOfActivePiece() {
