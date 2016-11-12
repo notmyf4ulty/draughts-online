@@ -21,11 +21,15 @@ public class Field extends Observable {
     }
 
     public void canSelectPiece() {
-        boardModel.selectPiece(position);
+        boardModel.clickPiece(position);
     }
 
-    public void selectPiece() {
-
+    public void clickPiece() {
+        if (piece.isSelected()) {
+            piece.unselect();
+        } else {
+            piece.select();
+        }
     }
 
     public void assignToBoard(BoardModel boardModel) {

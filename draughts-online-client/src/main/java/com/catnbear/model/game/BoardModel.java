@@ -2,8 +2,9 @@ package com.catnbear.model.game;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
-public class BoardModel {
+public class BoardModel extends Observable {
     private static final int BOARD_DIMENSION = 8;
 
     private final Map<Position,Field> board;
@@ -44,8 +45,14 @@ public class BoardModel {
         return field;
     }
 
-    public void selectPiece(Position position) {
-        board.get(position).selectPiece();
+    public void pieceSelected() {
+
+    }
+
+    public void clickPiece(Position position) {
+        board.get(position).clickPiece();
+        setChanged();
+        notifyObservers();
     }
 
     public Map<Position, Field> getFields() {

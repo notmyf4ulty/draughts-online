@@ -2,19 +2,23 @@ package com.catnbear.gui;
 
 import com.catnbear.model.game.BoardModel;
 import com.catnbear.model.game.Field;
+import com.catnbear.model.game.Piece;
 import com.catnbear.model.game.Position;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
-public class BoardView extends GridPane {
+public class BoardView extends GridPane implements Observer {
     private BoardModel boardModel;
 
     public BoardView(BoardModel boardModel) {
         super();
         this.boardModel = boardModel;
+        boardModel.addObserver(this);
         createBoard();
         refresh();
     }
@@ -36,13 +40,12 @@ public class BoardView extends GridPane {
             Map.Entry pair = (Map.Entry) iterator.next();
             Field field = (Field) pair.getValue();
             if (field.containsPiece()) {
-                putPieceView(new Position(field.getPosition().getX(), field.getPosition().getY()),
-                        new PieceView(field.getPiece()));
+                putPieceView(field.getPosition(), field.getPiece());
             }
         }
     }
 
-    public FieldView createFieldView(Position position) {
+    private FieldView createFieldView(Position position) {
         int FIELD_SIDE_LENGTH = 50;
         FieldView fieldView = new FieldView();
         fieldView.setPrefWidth(FIELD_SIDE_LENGTH);
@@ -51,19 +54,13 @@ public class BoardView extends GridPane {
         return fieldView;
     }
 
-    public void putPieceView(Position position, PieceView pieceView) {
+    private void putPieceView(Position position, Piece piece) {
         FieldView fieldView = getFieldView(position);
+        PieceView pieceView = new PieceView(piece);
+        pieceView.setOnMouseClicked(mouseEvent -> boardModel.clickPiece(position));
         if (fieldView != null) {
             fieldView.putPieceView(pieceView);
         }
-    }
-
-    public void deletePiece(Position position) {
-
-    }
-
-    public boolean hasPiece(Position position) {
-        return true;
     }
 
     private FieldView getFieldView(Position position) {
@@ -77,5 +74,10 @@ public class BoardView extends GridPane {
             }
         }
         return null;
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        refresh();
     }
 }

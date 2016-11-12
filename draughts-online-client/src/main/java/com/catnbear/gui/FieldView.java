@@ -21,9 +21,8 @@ public class FieldView extends StackPane {
     }
 
     void putPieceView(PieceView pieceView) {
-        if (!containsPieceView()) {
-            getChildren().add(pieceView);
-        }
+        getChildren().clear();
+        getChildren().add(pieceView);
     }
 
     public void clear() {

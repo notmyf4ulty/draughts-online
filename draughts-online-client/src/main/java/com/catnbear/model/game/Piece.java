@@ -19,11 +19,24 @@ public class Piece extends Observable {
     private PieceType type;
     private PieceOwner owner;
     private Position position;
+    private boolean selected;
 
     public Piece(PieceType type, PieceOwner owner, Position position) {
         this.type = type;
         this.owner = owner;
         this.position = position;
+    }
+
+    void select() {
+        selected = true;
+    }
+
+    void unselect() {
+        selected = false;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 
     public PieceType getType() {

@@ -17,18 +17,25 @@ public class PieceView extends Circle {
     }
 
     private void assignColor(Piece.PieceOwner pieceOwner) {
-        String color;
+        String insideColor;
+        String boundsColor;
         switch (pieceOwner) {
             case PLAYER_1:
-                color = "white";
+                insideColor = "white";
                 break;
             case PLAYER_2:
-                color = "black";
+                insideColor = "black";
                 break;
             default:
-                color = "";
+                insideColor = "";
                 break;
         }
-        setFill(Paint.valueOf(color));
+        if (piece.isSelected()) {
+            boundsColor = "blue";
+        } else {
+            boundsColor = insideColor;
+        }
+        setFill(Paint.valueOf(insideColor));
+        setStroke(Paint.valueOf(boundsColor));
     }
 }
