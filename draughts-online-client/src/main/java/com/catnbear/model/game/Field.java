@@ -25,11 +25,11 @@ public class Field extends Observable {
     }
 
     public void selectPiece() {
-        if (piece.isSelected()) {
-            piece.unselect();
-        } else {
-            piece.select();
-        }
+        piece.select();
+    }
+
+    public void unselectPiece() {
+        piece.unselect();
     }
 
     public void assignToBoard(BoardModel boardModel) {

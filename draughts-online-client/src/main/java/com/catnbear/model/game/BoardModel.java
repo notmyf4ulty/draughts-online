@@ -1,6 +1,7 @@
 package com.catnbear.model.game;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 
@@ -46,18 +47,24 @@ public class BoardModel extends Observable {
         return field;
     }
 
-    public void pieceSelected() {
-
-    }
-
     public void clickField(Position position) {
+        resetSelection();
         Field clickedField = board.get(position);
         Player activePlayer = gameModel.getActivePlayer();
         if (clickedField.containsPiece() &&
                 clickedField.getPiece().getPlayer().equals(activePlayer)) {
             clickedField.selectPiece();
-            setChanged();
-            notifyObservers();
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    private void resetSelection() {
+        for (Map.Entry<Position, Field> positionFieldEntry : board.entrySet()) {
+            Field field = positionFieldEntry.getValue();
+            if (field.containsPiece()) {
+                field.unselectPiece();
+            }
         }
     }
 
