@@ -11,7 +11,10 @@
     </VBox>
     <HBox>
         <Button text="End turn" onAction="#endTurnButtonCallback"/>
+        <Button text="Reset turn" onAction="#resetTurnButtonCallback"/>
         <Label text="Active player: "/>
         <Label fx:id="activePlayerLabel"/>
+        <Label text="Round: "/>
+        <Label fx:id="roundLabel"/>
     </HBox>
 </VBox>

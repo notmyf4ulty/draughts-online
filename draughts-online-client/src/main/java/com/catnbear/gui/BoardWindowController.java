@@ -2,6 +2,9 @@ package com.catnbear.gui;
 
 import com.catnbear.model.game.BoardModel;
 import com.catnbear.model.game.GameModel;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -14,14 +17,18 @@ public class BoardWindowController {
     @FXML
     private Label activePlayerLabel;
 
+    @FXML
+    private Label roundLabel;
+
     private GameModel gameModel;
     private BoardModel boardModel;
 
     @FXML
     private void initialize() {
-        gameModel = GameModel.getInstance();
         boardModel = new BoardModel();
+        gameModel = GameModel.getInstance();
         activePlayerLabel.textProperty().bind(gameModel.activePlayerLabelTextProperty());
+        roundLabel.textProperty().bind(gameModel.roundLabelValueProperty().asString());
         createBoard();
     }
 
@@ -32,6 +39,11 @@ public class BoardWindowController {
 
     @FXML
     private void endTurnButtonCallback() {
-        gameModel.nextPlayer();
+        gameModel.prepareNewRound();
+    }
+
+    @FXML
+    private void resetTurnButtonCallback() {
+        gameModel.retreiveBackup();
     }
 }

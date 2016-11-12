@@ -28,6 +28,15 @@ public class Field extends Observable {
         piece = null;
     }
 
+    public Field getCopy() {
+        Field field = new Field(this.position.getCopy());
+        if (containsPiece()) {
+            Piece piece = this.piece.getCopy();
+            piece.assignField(field);
+        }
+        return field;
+    }
+
     public Position getPosition() {
         return position;
     }

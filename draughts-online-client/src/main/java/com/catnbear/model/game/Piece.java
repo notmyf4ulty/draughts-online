@@ -28,6 +28,12 @@ public class Piece extends Observable {
         this.field.setPiece(this);
     }
 
+    public Piece getCopy() {
+        Piece piece = new Piece(type,player);
+        piece.selected = selected;
+        return piece;
+    }
+
     void select() {
         selected = true;
     }

@@ -1,5 +1,7 @@
 package com.catnbear.model.game;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -9,10 +11,12 @@ public class GameModel {
     private static GameModel instance = null;
     private Player activePlayer;
     private StringProperty activePlayerLabelText;
+    private boolean moveAvailable;
+    private BoardModel boardModel;
+    private IntegerProperty roundLabelValue;
 
     private GameModel() {
-        activePlayer = drawPlayer();
-        activePlayerLabelText = new SimpleStringProperty(activePlayer.toString());
+        prepareNewRound();
     }
 
     public static GameModel getInstance() {
@@ -30,7 +34,20 @@ public class GameModel {
         return activePlayer;
     }
 
-    public void nextPlayer() {
+    public void prepareNewRound() {
+        if (roundLabelValue == null) {
+            activePlayer = drawPlayer();
+            activePlayerLabelText = new SimpleStringProperty(activePlayer.toString());
+            roundLabelValue = new SimpleIntegerProperty(0);
+        } else {
+            nextPlayer();
+            roundLabelValue.setValue(roundLabelValue.getValue() + 1);
+        }
+        moveAvailable = true;
+        backupBoardModel();
+    }
+
+    private void nextPlayer() {
         if (activePlayer.equals(Player.PLAYER_1)) {
             activePlayer = Player.PLAYER_2;
         } else {
@@ -39,7 +56,28 @@ public class GameModel {
         activePlayerLabelText.setValue(activePlayer.toString());
     }
 
+    private void backupBoardModel() {
+        if (boardModel != null) {
+            boardModel.backupBoard();
+        }
+    }
+
+    public void retreiveBackup() {
+        if (boardModel != null) {
+            boardModel.retreiveBackup();
+        }
+        moveAvailable = true;
+    }
+
+    public void assignBoardModel(BoardModel boardModel) {
+        this.boardModel = boardModel;
+    }
+
     public StringProperty activePlayerLabelTextProperty() {
         return activePlayerLabelText;
+    }
+
+    public IntegerProperty roundLabelValueProperty() {
+        return roundLabelValue;
     }
 }

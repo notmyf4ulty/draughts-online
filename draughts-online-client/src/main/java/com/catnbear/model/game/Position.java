@@ -21,6 +21,10 @@ public class Position {
         return (x + y) % 2 == 0;
     }
 
+    public Position getCopy() {
+        return new Position(x,y);
+    }
+
     public int getX() {
         return x;
     }

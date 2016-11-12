@@ -1,17 +1,18 @@
 package com.catnbear.model.game;
 
-import javafx.geometry.Pos;
-
 import java.util.*;
 
 public class BoardModel extends Observable {
     private static final int BOARD_DIMENSION = 8;
-    private final Field [][] board;
+    private Field [][] board;
+    private Field [][] boardBackup;
     private GameModel gameModel;
 
     public BoardModel() {
         board = generateBoard();
+        backupBoard();
         gameModel = GameModel.getInstance();
+        gameModel.assignBoardModel(this);
     }
 
     private Field [][] generateBoard() {
@@ -57,28 +58,42 @@ public class BoardModel extends Observable {
 
 
     private void moveActivePiece(Field fromField, Field toField) {
-        if (isMovePossible(fromField,toField)) {
-            Piece piece = fromField.getPiece();
-            fromField.resetPiece();
-            toField.setPiece(piece);
-        } else if (canBeatEnemy(fromField,toField)) {
-            int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
-            int y = (toField.getPosition().getY() + fromField.getPosition().getY()) / 2;
-            Field field = board[x][y];
-            field.resetPiece();
+        boolean diagonalOneFieldNeighbourhoodCondition =
+                fromField.getPosition().isOneFieldDiagonalNeighbour(toField.getPosition());
+        boolean noPieceOnToFieldCondition = !toField.containsPiece();
+        boolean isProperDirectionCondition = isProperDirection(fromField,toField);
+
+        if (diagonalOneFieldNeighbourhoodCondition &&
+                noPieceOnToFieldCondition &&
+                isProperDirectionCondition) {
             Piece piece = fromField.getPiece();
             fromField.resetPiece();
             toField.setPiece(piece);
         } else {
-            fromField.unselectPiece();
+            if (canBeatEnemy(fromField, toField)) {
+                int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
+                int y = (toField.getPosition().getY() + fromField.getPosition().getY()) / 2;
+                Field field = board[x][y];
+                field.resetPiece();
+                Piece piece = fromField.getPiece();
+                fromField.resetPiece();
+                toField.setPiece(piece);
+            } else {
+                fromField.unselectPiece();
+            }
         }
     }
 
-    private boolean isMovePossible(Field fromField, Field toField) {
-        boolean diagonalOneFieldNeighbourhoodCondition =
-                fromField.getPosition().isOneFieldDiagonalNeighbour(toField.getPosition());
-        boolean noPieceOnToFieldCondition = !toField.containsPiece();
-        return diagonalOneFieldNeighbourhoodCondition && noPieceOnToFieldCondition;
+    private boolean isProperDirection(Field fromField, Field toField) {
+        int yFrom = fromField.getPosition().getY();
+        int yTo = toField.getPosition().getY();
+        switch (gameModel.getActivePlayer()) {
+            case PLAYER_1:
+                return yTo > yFrom;
+            case PLAYER_2:
+                return yTo < yFrom;
+        }
+        return false;
     }
 
     private boolean canBeatEnemy(Field fromField, Field toField) {
@@ -116,6 +131,21 @@ public class BoardModel extends Observable {
                 }
             }
         }
+    }
+
+    public void backupBoard() {
+        boardBackup = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
+        for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
+            for (int j = 0 ; j < BOARD_DIMENSION ; j++) {
+                boardBackup[i][j] = board[i][j].getCopy();
+            }
+        }
+    }
+
+    public void retreiveBackup() {
+        board = boardBackup;
+        setChanged();
+        notifyObservers();
     }
 
     public Field[][] getBoard() {
