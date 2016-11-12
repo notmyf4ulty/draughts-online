@@ -1,7 +1,7 @@
 package com.catnbear.gui;
 
 import com.catnbear.model.game.Piece;
-import javafx.scene.layout.GridPane;
+import com.catnbear.model.game.Player;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
@@ -12,14 +12,14 @@ public class PieceView extends Circle {
     public PieceView(Piece piece) {
         super();
         this.piece = piece;
-        assignColor(piece.getOwner());
+        assignColor(piece.getPlayer());
         setRadius(PIECE_RADIUS);
     }
 
-    private void assignColor(Piece.PieceOwner pieceOwner) {
+    private void assignColor(Player player) {
         String insideColor;
         String boundsColor;
-        switch (pieceOwner) {
+        switch (player) {
             case PLAYER_1:
                 insideColor = "white";
                 break;

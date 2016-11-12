@@ -1,14 +1,13 @@
 package com.catnbear.model.game;
 
-/**
- * Created by przemek on 09.11.16.
- */
+import java.util.concurrent.ThreadLocalRandom;
+
 public class GameModel {
     private static GameModel instance = null;
-    private BoardModel boardModel;
+    private Player activePlayer;
 
     private GameModel() {
-        boardModel = new BoardModel();
+        activePlayer = drawPlayer();
     }
 
     public static GameModel getInstance() {
@@ -19,8 +18,19 @@ public class GameModel {
     }
 
 
+    private Player drawPlayer() {
+        return (ThreadLocalRandom.current().nextInt(0,2) == 0) ? Player.PLAYER_1 : Player.PLAYER_2;
+    }
 
-    public BoardModel getBoardModel() {
-        return boardModel;
+    public Player getActivePlayer() {
+        return activePlayer;
+    }
+
+    public void nextPlayer() {
+        if (activePlayer.equals(Player.PLAYER_1)) {
+            activePlayer = Player.PLAYER_2;
+        } else {
+            activePlayer = Player.PLAYER_1;
+        }
     }
 }

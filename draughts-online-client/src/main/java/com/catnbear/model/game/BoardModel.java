@@ -6,11 +6,12 @@ import java.util.Observable;
 
 public class BoardModel extends Observable {
     private static final int BOARD_DIMENSION = 8;
-
     private final Map<Position,Field> board;
+    private GameModel gameModel;
 
     public BoardModel() {
         board = createBoard();
+        gameModel = GameModel.getInstance();
     }
 
     private Map<Position,Field> createBoard() {
@@ -31,11 +32,11 @@ public class BoardModel extends Observable {
             field = new Field(Field.FieldColor.COLOR_1,position);
             if (position.getY() < 3) {
                 field.setPiece(new Piece(Piece.PieceType.MEN,
-                        Piece.PieceOwner.PLAYER_1,
+                        Player.PLAYER_1,
                         position));
             } else if (position.getY() > 4) {
                 field.setPiece(new Piece(Piece.PieceType.MEN,
-                        Piece.PieceOwner.PLAYER_2,
+                        Player.PLAYER_2,
                         position));
             }
         } else {
@@ -49,10 +50,15 @@ public class BoardModel extends Observable {
 
     }
 
-    public void clickPiece(Position position) {
-        board.get(position).clickPiece();
-        setChanged();
-        notifyObservers();
+    public void clickField(Position position) {
+        Field clickedField = board.get(position);
+        Player activePlayer = gameModel.getActivePlayer();
+        if (clickedField.containsPiece() &&
+                clickedField.getPiece().getPlayer().equals(activePlayer)) {
+            clickedField.selectPiece();
+            setChanged();
+            notifyObservers();
+        }
     }
 
     public Map<Position, Field> getFields() {

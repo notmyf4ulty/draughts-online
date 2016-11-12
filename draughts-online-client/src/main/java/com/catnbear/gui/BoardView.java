@@ -1,9 +1,6 @@
 package com.catnbear.gui;
 
-import com.catnbear.model.game.BoardModel;
-import com.catnbear.model.game.Field;
-import com.catnbear.model.game.Piece;
-import com.catnbear.model.game.Position;
+import com.catnbear.model.game.*;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 
@@ -14,9 +11,11 @@ import java.util.Observer;
 
 public class BoardView extends GridPane implements Observer {
     private BoardModel boardModel;
+    private GameModel gameModel;
 
     public BoardView(BoardModel boardModel) {
         super();
+        this.gameModel = GameModel.getInstance();
         this.boardModel = boardModel;
         boardModel.addObserver(this);
         createBoard();
@@ -51,13 +50,13 @@ public class BoardView extends GridPane implements Observer {
         fieldView.setPrefWidth(FIELD_SIDE_LENGTH);
         fieldView.setPrefHeight(FIELD_SIDE_LENGTH);
         fieldView.setColor(position);
+        fieldView.setOnMouseClicked(mouseEvent -> boardModel.clickField(position));
         return fieldView;
     }
 
     private void putPieceView(Position position, Piece piece) {
         FieldView fieldView = getFieldView(position);
         PieceView pieceView = new PieceView(piece);
-        pieceView.setOnMouseClicked(mouseEvent -> boardModel.clickPiece(position));
         if (fieldView != null) {
             fieldView.putPieceView(pieceView);
         }

@@ -4,12 +4,6 @@ import java.util.Observable;
 
 public class Piece extends Observable {
 
-    public enum PieceOwner {
-        NONE,
-        PLAYER_1,
-        PLAYER_2
-    }
-
     public enum PieceType {
         NONE,
         MEN,
@@ -17,13 +11,13 @@ public class Piece extends Observable {
     }
 
     private PieceType type;
-    private PieceOwner owner;
+    private Player player;
     private Position position;
     private boolean selected;
 
-    public Piece(PieceType type, PieceOwner owner, Position position) {
+    public Piece(PieceType type, Player player, Position position) {
         this.type = type;
-        this.owner = owner;
+        this.player = player;
         this.position = position;
     }
 
@@ -47,12 +41,12 @@ public class Piece extends Observable {
         this.type = type;
     }
 
-    public PieceOwner getOwner() {
-        return owner;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setOwner(PieceOwner owner) {
-        this.owner = owner;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public Position getPosition() {
