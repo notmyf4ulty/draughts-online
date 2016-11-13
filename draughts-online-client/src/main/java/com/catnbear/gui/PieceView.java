@@ -20,10 +20,10 @@ class PieceView extends Circle {
         String insideColor;
         String boundsColor;
         switch (player) {
-            case PLAYER_1:
+            case WHITE:
                 insideColor = "white";
                 break;
-            case PLAYER_2:
+            case BLACK:
                 insideColor = "black";
                 break;
             default:

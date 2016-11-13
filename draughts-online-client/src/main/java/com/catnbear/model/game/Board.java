@@ -3,7 +3,7 @@ package com.catnbear.model.game;
 import java.util.*;
 
 public class Board extends Observable {
-    private static final int BOARD_DIMENSION = 8;
+    private static final int BOARD_DIMENSION = 5;
     private Field [][] board;
     private Field [][] boardBackup;
     private GameModel gameModel;
@@ -33,13 +33,13 @@ public class Board extends Observable {
     private Field setInitialConfiguration(Position position) {
         Field field = new Field(position);
         if (position.isXySumEven()) {
-            int playerOnePieceGenerationBorder = 3;
-            int playerTwoPieceGenerationBorder = 4;
+            int playerOnePieceGenerationBorder = 2;
+            int playerTwoPieceGenerationBorder = 2;
             if (position.getY() < playerOnePieceGenerationBorder) {
-                Piece piece = new Piece(Piece.PieceType.MEN, Player.PLAYER_1);
+                Piece piece = new Piece(Piece.PieceType.MEN, Player.WHITE);
                 piece.assignField(field);
             } else if (position.getY() > playerTwoPieceGenerationBorder) {
-                Piece piece = new Piece(Piece.PieceType.MEN, Player.PLAYER_2);
+                Piece piece = new Piece(Piece.PieceType.MEN, Player.BLACK);
                 piece.assignField(field);
             }
         }
@@ -106,9 +106,9 @@ public class Board extends Observable {
             int yFrom = fromPosition.getY();
             int yTo = toPosition.getY();
             switch (gameModel.getActivePlayer()) {
-                case PLAYER_1:
+                case WHITE:
                     return yTo > yFrom;
-                case PLAYER_2:
+                case BLACK:
                     return yTo < yFrom;
             }
             return false;

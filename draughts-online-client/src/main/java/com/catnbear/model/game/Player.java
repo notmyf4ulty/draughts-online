@@ -1,8 +1,8 @@
 package com.catnbear.model.game;
 
 public enum Player {
-    PLAYER_1("Player 1"),
-    PLAYER_2("Player 2");
+    WHITE("White"),
+    BLACK("Black");
 
     private final String stringForm;
 

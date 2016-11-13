@@ -27,7 +27,7 @@ public class GameModel {
     }
 
     private Player drawPlayer() {
-        return (ThreadLocalRandom.current().nextInt(0,2) == 0) ? Player.PLAYER_1 : Player.PLAYER_2;
+        return (ThreadLocalRandom.current().nextInt(0,2) == 0) ? Player.WHITE : Player.BLACK;
     }
 
     Player getActivePlayer() {
@@ -50,10 +50,10 @@ public class GameModel {
     }
 
     private void nextPlayer() {
-        if (activePlayer.equals(Player.PLAYER_1)) {
-            activePlayer = Player.PLAYER_2;
+        if (activePlayer.equals(Player.WHITE)) {
+            activePlayer = Player.BLACK;
         } else {
-            activePlayer = Player.PLAYER_1;
+            activePlayer = Player.WHITE;
         }
         activePlayerLabelText.setValue(activePlayer.toString());
     }
