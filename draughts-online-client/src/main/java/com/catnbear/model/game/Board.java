@@ -102,15 +102,19 @@ public class Board extends Observable {
     }
 
     private boolean isProperDirection(Position fromPosition, Position toPosition) {
-        int yFrom = fromPosition.getY();
-        int yTo = toPosition.getY();
-        switch (gameModel.getActivePlayer()) {
-            case PLAYER_1:
-                return yTo > yFrom;
-            case PLAYER_2:
-                return yTo < yFrom;
+        if(Position.getMoveDistance(fromPosition,toPosition).equals(MoveDistance.ONE_FIELD_DISTANCE)) {
+            int yFrom = fromPosition.getY();
+            int yTo = toPosition.getY();
+            switch (gameModel.getActivePlayer()) {
+                case PLAYER_1:
+                    return yTo > yFrom;
+                case PLAYER_2:
+                    return yTo < yFrom;
+            }
+            return false;
+        } else {
+            return true;
         }
-        return false;
     }
 
     private void movePiece(Field fromField, Field toField) {
@@ -130,7 +134,9 @@ public class Board extends Observable {
             enemyField.resetPiece();
             movePiece(fromField,toField);
             multiBeatMode = isOpponentToBeatAround(toField);
-            gameModel.setMoveAvailable(true);
+            if (multiBeatMode) {
+                gameModel.setMoveAvailable(true);
+            }
         }
     }
 
@@ -171,8 +177,21 @@ public class Board extends Observable {
             if (!behindOpponentField.containsPiece() &&
                     Position
                             .getMoveDistance(attackingField.getPosition(),behindOpponentField.getPosition())
-                            .equals(MoveDistance.TWO_FIELDS_DISTANCE)) {
+                            .equals(MoveDistance.TWO_FIELDS_DISTANCE) &&
+                    isOpponentInTheMiddle(attackingField.getPosition(),behindOpponentField.getPosition())) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isOpponentInTheMiddle(Position fromPosition, Position toPosition) {
+        int opponentX = (fromPosition.getX() + toPosition.getX()) / 2;
+        int opponentY = (fromPosition.getY() + toPosition.getY()) / 2;
+        if (opponentX != 0 && opponentY != 0) {
+            Field opponentField = board[opponentX][opponentY];
+            if (opponentField.containsPiece()) {
+                return !opponentField.getPiece().getPlayer().equals(gameModel.getActivePlayer());
             }
         }
         return false;
@@ -213,6 +232,7 @@ public class Board extends Observable {
     void retrieveBackup() {
         board = getCopy(boardBackup);
         multiBeatMode = false;
+        multiBeatingPieceField = null;
         setChanged();
         notifyObservers();
     }
