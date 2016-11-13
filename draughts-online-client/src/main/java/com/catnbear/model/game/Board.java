@@ -259,6 +259,30 @@ public class Board extends Observable {
         return boardString;
     }
 
+    public void createBoardFromString(String boardString) {
+        String [] boardColumns = boardString.split(";");
+        Field [][] newBoard = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
+        for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
+            for (int j = 0 ; j < BOARD_DIMENSION ; j++) {
+                Field field = new Field(new Position(i,j));
+                switch (boardColumns[i].charAt(j)) {
+                    case 'w':
+                        Piece whitePiece = new Piece(Piece.PieceType.MEN,Player.WHITE);
+                        field.setPiece(whitePiece);
+                        break;
+                    case 'b':
+                        Piece blackPiece = new Piece(Piece.PieceType.MEN,Player.BLACK);
+                        field.setPiece(blackPiece);
+                        break;
+                }
+                newBoard[i][j] = field;
+            }
+        }
+        boardBackup = getCopy(newBoard);
+        backupBoard();
+        System.out.println(prepareToSend());
+    }
+
     public Field[][] getBoard() {
         return board;
     }

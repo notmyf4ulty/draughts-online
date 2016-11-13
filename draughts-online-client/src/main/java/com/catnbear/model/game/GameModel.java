@@ -55,7 +55,8 @@ public class GameModel {
         }
         if (board != null) {
             connection.sendData(board.prepareToSend());
-            System.out.println(connection.waitForData());
+            board.createBoardFromString(connection.waitForData());
+//            System.out.println(connection.waitForData());
         }
     }
 

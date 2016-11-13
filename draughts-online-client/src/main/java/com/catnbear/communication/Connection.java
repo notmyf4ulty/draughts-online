@@ -23,6 +23,7 @@ public class Connection {
 //            Socket serverSocket = new Socket(hostName, portNumber);
             PrintWriter out = new PrintWriter(serverSocket.getOutputStream(),true);
             out.println(data);
+//            out.close();
         } catch (IOException exception) {
             return false;
         }
@@ -42,7 +43,8 @@ public class Connection {
                 }
                 Thread.sleep(1000);
             } while (response.equals("err"));
-            serverSocket.close();
+//            inputStream.close();
+//            serverSocket.close();
         } catch (IOException exception) {
             return response;
         } catch (InterruptedException exception) {

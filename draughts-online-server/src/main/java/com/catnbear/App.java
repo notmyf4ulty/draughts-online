@@ -77,6 +77,7 @@ public class App {
             ) {
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
+                    System.out.println(inputLine);
                     out.println(inputLine);
                     try {
                         Thread.sleep(100);
