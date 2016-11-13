@@ -43,53 +43,14 @@ public class App {
 
         while (true) {
             Socket clientSocket_1 = serverSocket.accept();
-//            Socket clientSocket_2 = serverSocket.accept();
-
-            MyThread thread_1 = new MyThread(clientSocket_1, clientSocket_1, portNumber);
+            ConfigurationThread configurationThread_1 = new ConfigurationThread(clientSocket_1, portNumber);
+            configurationThread_1.start();
             System.out.println("Client 1 connected.");
-            MyThread thread_2 = new MyThread(clientSocket_1, clientSocket_1, portNumber);
+            Socket clientSocket_2 = serverSocket.accept();
+            ConfigurationThread configurationThread_2 = new ConfigurationThread(clientSocket_2, portNumber);
+            configurationThread_2.start();
             System.out.println("Client 2 connected.");
 
-
-            thread_1.start();
-//            thread_2.start();
-        }
-    }
-
-    public static class MyThread extends Thread {
-        private Socket mySocket;
-        private Socket herSocket;
-        private int portNumber;
-
-        public MyThread(Socket mySocket, Socket herSocket, int portNumber) {
-            this.mySocket = mySocket;
-            this.herSocket = herSocket;
-            this.portNumber = portNumber;
-        }
-
-        @Override
-        public void run() {
-            try (
-                    PrintWriter out =
-                            new PrintWriter(herSocket.getOutputStream(), true);
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(mySocket.getInputStream()))
-            ) {
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    System.out.println(inputLine);
-                    out.println(inputLine);
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (IOException e) {
-                System.out.println("Exception caught when trying to listen on port "
-                        + portNumber + " or listening for a connection");
-                System.out.println(e.getMessage());
-            }
         }
     }
 }

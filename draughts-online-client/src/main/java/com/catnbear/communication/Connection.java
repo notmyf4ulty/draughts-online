@@ -5,9 +5,9 @@ import java.net.Socket;
 
 public class Connection {
     private static Connection instance = null;
-    String hostName;
-    int portNumber;
-    Socket serverSocket;
+    private String hostName;
+    private int portNumber;
+    private Socket serverSocket;
 
     private Connection() {}
 
@@ -20,10 +20,8 @@ public class Connection {
 
     public boolean sendData(String data) {
         try {
-//            Socket serverSocket = new Socket(hostName, portNumber);
             PrintWriter out = new PrintWriter(serverSocket.getOutputStream(),true);
             out.println(data);
-//            out.close();
         } catch (IOException exception) {
             return false;
         }
@@ -33,7 +31,6 @@ public class Connection {
     public String waitForData() {
         String response = "err";
         try {
-//            Socket serverSocket = new Socket(hostName, portNumber);
             InputStream inputStream = serverSocket.getInputStream();
             do {
                 if (inputStream.available() != 0) {
@@ -43,13 +40,12 @@ public class Connection {
                 }
                 Thread.sleep(1000);
             } while (response.equals("err"));
-//            inputStream.close();
-//            serverSocket.close();
         } catch (IOException exception) {
             return response;
         } catch (InterruptedException exception) {
             return response;
         }
+        System.out.println(response);
         return response;
     }
 

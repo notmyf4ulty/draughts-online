@@ -2,7 +2,8 @@ package com.catnbear.model.game;
 
 public enum Player {
     WHITE("White"),
-    BLACK("Black");
+    BLACK("Black"),
+    INCORRECT_PLAYER("Black");
 
     private final String stringForm;
 

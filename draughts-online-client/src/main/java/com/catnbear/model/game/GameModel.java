@@ -43,7 +43,7 @@ public class GameModel {
     public void prepareNewRound() {
         if (!moveAvailable) {
             if (roundLabelValue == null) {
-                activePlayer = drawPlayer();
+                activePlayer = joinGame();
                 activePlayerLabelText = new SimpleStringProperty(activePlayer.toString());
                 roundLabelValue = new SimpleIntegerProperty(0);
             } else {
@@ -53,11 +53,28 @@ public class GameModel {
             moveAvailable = true;
             backupBoardModel();
         }
-        if (board != null) {
-            connection.sendData(board.prepareToSend());
-            board.createBoardFromString(connection.waitForData());
-//            System.out.println(connection.waitForData());
+//        if (board != null) {
+//            connection.sendData(board.prepareToSend());
+//            board.createBoardFromString(connection.waitForData());
+//        }
+    }
+
+    private Player joinGame() {
+        connection.sendData("join");
+        String response = connection.waitForData();
+        Player player;
+        switch (response) {
+            case "w":
+                player = Player.WHITE;
+                break;
+            case "b":
+                player = Player.BLACK;
+                break;
+            default:
+                player = Player.INCORRECT_PLAYER;
+                break;
         }
+        return player;
     }
 
     private void nextPlayer() {
