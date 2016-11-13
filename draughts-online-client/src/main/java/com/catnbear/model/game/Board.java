@@ -7,12 +7,14 @@ public class Board extends Observable {
     private Field [][] board;
     private Field [][] boardBackup;
     private GameModel gameModel;
+    private boolean multiBeatMode;
 
     public Board() {
         board = generateBoard();
         backupBoard();
         gameModel = GameModel.getInstance();
         gameModel.assignBoardModel(this);
+        multiBeatMode = false;
     }
 
     private Field [][] generateBoard() {
@@ -74,7 +76,9 @@ public class Board extends Observable {
                 isProperDirection(fromField.getPosition(),toField.getPosition())) {
             switch (Position.getMoveDistance(fromField.getPosition(),toField.getPosition())) {
                 case ONE_FIELD_DISTANCE:
-                    movePiece(fromField,toField);
+                    if (!multiBeatMode) {
+                        movePiece(fromField, toField);
+                    }
                     break;
                 case TWO_FIELDS_DISTANCE:
                     movePieceByTwoFields(fromField,toField);
@@ -113,7 +117,44 @@ public class Board extends Observable {
         if (enemyField.containsPiece() && !enemyField.getPiece().getPlayer().equals(activePlayer)) {
             enemyField.resetPiece();
             movePiece(fromField,toField);
+            multiBeatMode = isOpponentToBeatAround(toField);
+            gameModel.setMoveAvailable(true);
         }
+    }
+
+    private boolean isOpponentToBeatAround(Field field) {
+        Field [] opponentFields = getNeighbouringOpponents(field);
+        return isPlaceBehindOpponents(field, opponentFields);
+    }
+
+    private Field [] getNeighbouringOpponents(Field field) {
+        ArrayList<Field> opponentFields = new ArrayList<>();
+        Position [] neighbouringPositions = field.getPosition().getDiagonalNeighboursPositions(1,BOARD_DIMENSION);
+        for (Position position : neighbouringPositions) {
+            Field opponentField = board[position.getX()][position.getY()];
+            if (opponentField.containsPiece() &&
+                    !opponentField.getPiece().getPlayer().equals(gameModel.getActivePlayer())) {
+                opponentFields.add(opponentField);
+            }
+        }
+
+        Field [] opponentFieldsArray = new Field[opponentFields.size()];
+        opponentFieldsArray = opponentFields.toArray(opponentFieldsArray);
+        return opponentFieldsArray;
+    }
+
+    private boolean isPlaceBehindOpponents(Field attackingField, Field [] opponents) {
+        Position [] neighbouringPositions = attackingField.getPosition().getDiagonalNeighboursPositions(2,BOARD_DIMENSION);
+        for (Position position : neighbouringPositions) {
+            Field behindOpponentField = board[position.getX()][position.getY()];
+            if (!behindOpponentField.containsPiece() &&
+                    Position
+                            .getMoveDistance(attackingField.getPosition(),behindOpponentField.getPosition())
+                            .equals(MoveDistance.TWO_FIELDS_DISTANCE)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void selectPiece(Field field) {
@@ -150,6 +191,7 @@ public class Board extends Observable {
 
     void retrieveBackup() {
         board = getCopy(boardBackup);
+        multiBeatMode = false;
         setChanged();
         notifyObservers();
     }
