@@ -55,7 +55,7 @@ class BoardView extends GridPane implements Observer {
         fieldView.setPrefWidth(FIELD_SIDE_LENGTH);
         fieldView.setPrefHeight(FIELD_SIDE_LENGTH);
         fieldView.setColor(position);
-        fieldView.setOnMouseClicked(mouseEvent -> board.clickField(position));
+        fieldView.setOnMouseClicked(mouseEvent -> board.chooseField(position));
         return fieldView;
     }
 

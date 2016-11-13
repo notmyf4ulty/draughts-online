@@ -21,6 +21,20 @@ public class Position {
         return (x + y) % 2 == 0;
     }
 
+    public static MoveDistance getMoveDistance(Position fromPosition, Position toPosition) {
+        int xDelta = Math.abs(fromPosition.getX() - toPosition.getX());
+        int yDelta = Math.abs(fromPosition.getY() - toPosition.getY());
+        if ((xDelta == yDelta)) {
+            if (xDelta == 1) {
+                return MoveDistance.ONE_FIELD_DISTANCE;
+            } else {
+                return MoveDistance.TWO_FIELDS_DISTANCE;
+            }
+        } else {
+            return MoveDistance.INCORRECT_DISTANCE;
+        }
+    }
+
     public Position getCopy() {
         return new Position(x,y);
     }

@@ -64,7 +64,7 @@ public class GameModel {
 
     public void retreiveBackup() {
         if (board != null) {
-            board.retreiveBackup();
+            board.retrieveBackup();
         }
         moveAvailable = true;
     }
