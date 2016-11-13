@@ -1,7 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml">
-    <center>
-        <fx:include source="boardwindow.fxml"/>
-    </center>
-</BorderPane>
+<?import javafx.scene.layout.StackPane?>
+<StackPane xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: #c5925e;">
+    <children>
+        <fx:include source="/gui/welcomescreen.fxml"/>
+    </children>
+</StackPane>

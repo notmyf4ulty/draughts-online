@@ -2,11 +2,18 @@ package com.catnbear.gui;
 
 import com.catnbear.model.game.Board;
 import com.catnbear.model.game.GameModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 
 public class BoardWindowController {
+
+    @FXML
+    private HBox mainPane;
 
     @FXML
     private VBox boardPane;
