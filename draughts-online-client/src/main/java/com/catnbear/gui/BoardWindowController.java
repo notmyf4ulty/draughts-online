@@ -2,13 +2,12 @@ package com.catnbear.gui;
 
 import com.catnbear.model.game.Board;
 import com.catnbear.model.game.GameModel;
-import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 
 public class BoardWindowController {
 
@@ -21,9 +20,6 @@ public class BoardWindowController {
     @FXML
     private Label activePlayerLabel;
 
-    @FXML
-    private Label roundLabel;
-
     private GameModel gameModel;
     private Board board;
 
@@ -32,13 +28,29 @@ public class BoardWindowController {
         board = new Board();
         gameModel = GameModel.getInstance();
         activePlayerLabel.textProperty().bind(gameModel.activePlayerLabelTextProperty());
-        roundLabel.textProperty().bind(gameModel.roundLabelValueProperty().asString());
+        gameModel.communicateLabelTextProperty().addListener(new CommunicateListener());
         createBoard();
     }
+
 
     private void createBoard() {
         BoardView boardView = new BoardView(board);
         boardPane.getChildren().add(boardView);
+    }
+
+    private class CommunicateListener implements ChangeListener<String> {
+        @Override
+        public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+            String value = observableValue.getValue();
+            switch (value) {
+                case "lost":
+                    break;
+                case "win":
+                    break;
+                case "connlost":
+                    break;
+            }
+        }
     }
 
     @FXML
@@ -50,4 +62,11 @@ public class BoardWindowController {
     private void resetTurnButtonCallback() {
         gameModel.retreiveBackup();
     }
+
+    @FXML
+    private void surrenderButtonCallback() {
+        gameModel.surrender();
+    }
+
+
 }

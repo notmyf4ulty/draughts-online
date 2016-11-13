@@ -3,15 +3,14 @@ package com.catnbear.model.game;
 import com.catnbear.communication.Connection;
 import javafx.beans.property.*;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public class GameModel {
     private static GameModel instance = null;
     private Player player;
     private StringProperty activePlayerLabelText;
+    private StringProperty communicateLabelText;
     private boolean moveAvailable;
     private Board board;
-    private IntegerProperty roundLabelValue;
+    private boolean gameStarted;
     private Connection connection;
     private BooleanProperty connectionLost;
 
@@ -35,12 +34,11 @@ public class GameModel {
 
     public void prepareNewRound() {
         if (!moveAvailable) {
-            if (roundLabelValue == null) {
+            if (!gameStarted) {
                 initializeGame();
             } else {
                 connection.sendData(board.prepareToSend());
                 waitForNextRound();
-                roundLabelValue.setValue(roundLabelValue.getValue() + 1);
             }
             moveAvailable = true;
             backupBoardModel();
@@ -71,7 +69,7 @@ public class GameModel {
             waitForNextRound();
         }
         activePlayerLabelText = new SimpleStringProperty(player.toString());
-        roundLabelValue = new SimpleIntegerProperty(0);
+        gameStarted = true;
     }
 
     private void waitForNextRound() {
@@ -94,6 +92,18 @@ public class GameModel {
         moveAvailable = true;
     }
 
+    public void establishConnection() {
+        if(connection.connect()) {
+
+        } else {
+
+        }
+    }
+
+    public void surrender() {
+
+    }
+
     public void assignBoardModel(Board board) {
         this.board = board;
     }
@@ -110,7 +120,7 @@ public class GameModel {
         return activePlayerLabelText;
     }
 
-    public IntegerProperty roundLabelValueProperty() {
-        return roundLabelValue;
+    public StringProperty communicateLabelTextProperty() {
+        return communicateLabelText;
     }
 }
