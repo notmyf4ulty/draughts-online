@@ -49,7 +49,8 @@ public class Board extends Observable {
             Field activePieceField = getFieldOfActivePiece();
             if (activePieceField != null) {
                 moveActivePiece(activePieceField, chosenField);
-            } else if (chosenField.containsPiece()) {
+            }
+            if (chosenField.containsPiece()) {
                 selectPiece(chosenField);
             }
             setChanged();
@@ -133,17 +134,22 @@ public class Board extends Observable {
         }
     }
 
-    void backupBoard() {
-        boardBackup = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
+    private Field[][] getCopy(Field[][] fromBoard) {
+        Field [][] copyBoard = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
         for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
             for (int j = 0 ; j < BOARD_DIMENSION ; j++) {
-                boardBackup[i][j] = board[i][j].getCopy();
+                copyBoard[i][j] = fromBoard[i][j].getCopy();
             }
         }
+        return copyBoard;
+    }
+
+    void backupBoard() {
+        boardBackup = getCopy(board);
     }
 
     void retrieveBackup() {
-        board = boardBackup;
+        board = getCopy(boardBackup);
         setChanged();
         notifyObservers();
     }
