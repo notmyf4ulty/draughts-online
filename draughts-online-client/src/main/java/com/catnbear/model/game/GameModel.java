@@ -53,8 +53,10 @@ public class GameModel {
             moveAvailable = true;
             backupBoardModel();
         }
-        connection.sendData("Trains");
-        System.out.println(connection.waitForData());
+        if (board != null) {
+            connection.sendData(board.prepareToSend());
+            System.out.println(connection.waitForData());
+        }
     }
 
     private void nextPlayer() {

@@ -237,6 +237,28 @@ public class Board extends Observable {
         notifyObservers();
     }
 
+    public String prepareToSend() {
+        String boardString = "";
+        for (Field [] fields : board) {
+            for (Field field : fields) {
+                if (field.containsPiece()) {
+                    switch (field.getPiece().getPlayer()) {
+                        case WHITE:
+                            boardString += "w";
+                            break;
+                        case BLACK:
+                            boardString += "b";
+                            break;
+                    }
+                } else {
+                    boardString += "o";
+                }
+            }
+            boardString += ";";
+        }
+        return boardString;
+    }
+
     public Field[][] getBoard() {
         return board;
     }
