@@ -3,7 +3,6 @@ package com.catnbear.gui;
 import com.catnbear.utilities.GuiModifier;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 public class WelcomeScreenController {

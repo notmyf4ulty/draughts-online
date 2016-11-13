@@ -8,6 +8,8 @@ public class Connection {
     private String hostName;
     private int portNumber;
     private Socket serverSocket;
+    private PrintWriter outWriter;
+    private InputStream inputStream;
 
     private Connection() {}
 
@@ -19,19 +21,14 @@ public class Connection {
     }
 
     public boolean sendData(String data) {
-        try {
-            PrintWriter out = new PrintWriter(serverSocket.getOutputStream(),true);
-            out.println(data);
-        } catch (IOException exception) {
-            return false;
-        }
+        System.out.println("Sending data: " + data);
+        outWriter.println(data);
         return true;
     }
 
     public String waitForData() {
         String response = "err";
         try {
-            InputStream inputStream = serverSocket.getInputStream();
             do {
                 if (inputStream.available() != 0) {
                     InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -41,8 +38,10 @@ public class Connection {
                 Thread.sleep(1000);
             } while (response.equals("err"));
         } catch (IOException exception) {
+            exception.printStackTrace();
             return response;
         } catch (InterruptedException exception) {
+            exception.printStackTrace();
             return response;
         }
         System.out.println(response);
@@ -54,11 +53,15 @@ public class Connection {
         this.portNumber = portNumber;
     }
 
-    public void connect() {
+    public boolean connect() {
         try {
             serverSocket = new Socket(hostName,portNumber);
+            outWriter = new PrintWriter(serverSocket.getOutputStream(),true);
+            inputStream = serverSocket.getInputStream();
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection error.");
+            return false;
         }
     }
 }

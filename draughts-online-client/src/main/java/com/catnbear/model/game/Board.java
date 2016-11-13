@@ -15,6 +15,7 @@ public class Board extends Observable {
         backupBoard();
         gameModel = GameModel.getInstance();
         gameModel.assignBoardModel(this);
+        gameModel.prepareNewRound();
         multiBeatMode = false;
     }
 
@@ -260,6 +261,7 @@ public class Board extends Observable {
     }
 
     public void createBoardFromString(String boardString) {
+        System.out.println("Creating board from String: " + boardString);
         String [] boardColumns = boardString.split(";");
         Field [][] newBoard = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
         for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
@@ -279,12 +281,11 @@ public class Board extends Observable {
             }
         }
         boardBackup = getCopy(newBoard);
-        backupBoard();
-        System.out.println(prepareToSend());
+        retrieveBackup();
+        System.out.println("New board is: " + prepareToSend());
     }
 
     public Field[][] getBoard() {
         return board;
     }
-
 }

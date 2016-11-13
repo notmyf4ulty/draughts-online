@@ -1,10 +1,7 @@
 package com.catnbear.model.game;
 
 import com.catnbear.communication.Connection;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,12 +13,13 @@ public class GameModel {
     private Board board;
     private IntegerProperty roundLabelValue;
     private Connection connection;
+    private BooleanProperty connectionLost;
 
     private GameModel() {
+        connectionLost = new SimpleBooleanProperty(false);
         connection = Connection.getInstance();
         connection.setConnectionParameters("localhost",10001);
-        connection.connect();
-        prepareNewRound();
+        connectionLost.setValue(connection.connect());
     }
 
     public static GameModel getInstance() {
@@ -29,10 +27,6 @@ public class GameModel {
             instance = new GameModel();
         }
         return instance;
-    }
-
-    private Player drawPlayer() {
-        return (ThreadLocalRandom.current().nextInt(0,2) == 0) ? Player.WHITE : Player.BLACK;
     }
 
     Player getPlayer() {
@@ -44,17 +38,13 @@ public class GameModel {
             if (roundLabelValue == null) {
                 initializeGame();
             } else {
+                connection.sendData(board.prepareToSend());
                 waitForNextRound();
-//                nextRound();
                 roundLabelValue.setValue(roundLabelValue.getValue() + 1);
             }
             moveAvailable = true;
             backupBoardModel();
         }
-//        if (board != null) {
-//            connection.sendData(board.prepareToSend());
-//            board.createBoardFromString(connection.waitForData());
-//        }
     }
 
     private Player joinGame() {
@@ -77,23 +67,18 @@ public class GameModel {
 
     private void initializeGame() {
         player = joinGame();
+        if (player.equals(Player.BLACK)) {
+            waitForNextRound();
+        }
         activePlayerLabelText = new SimpleStringProperty(player.toString());
         roundLabelValue = new SimpleIntegerProperty(0);
     }
 
-    private boolean waitForNextRound() {
-        connection.sendData("ready");
+    private void waitForNextRound() {
+        connection.sendData("wait");
         String response = connection.waitForData();
-        return response.equals("ok");
-    }
-
-    private void nextRound() {
-        if (player.equals(Player.WHITE)) {
-            player = Player.BLACK;
-        } else {
-            player = Player.WHITE;
-        }
-        activePlayerLabelText.setValue(player.toString());
+        System.out.println("Got response: " + response);
+        board.createBoardFromString(response);
     }
 
     private void backupBoardModel() {
