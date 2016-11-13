@@ -7,6 +7,7 @@ public class Connection {
     private static Connection instance = null;
     String hostName;
     int portNumber;
+    Socket serverSocket;
 
     private Connection() {}
 
@@ -19,7 +20,7 @@ public class Connection {
 
     public boolean sendData(String data) {
         try {
-            Socket serverSocket = new Socket(hostName, portNumber);
+//            Socket serverSocket = new Socket(hostName, portNumber);
             PrintWriter out = new PrintWriter(serverSocket.getOutputStream(),true);
             out.println(data);
         } catch (IOException exception) {
@@ -31,7 +32,7 @@ public class Connection {
     public String waitForData() {
         String response = "err";
         try {
-            Socket serverSocket = new Socket(hostName, portNumber);
+//            Socket serverSocket = new Socket(hostName, portNumber);
             InputStream inputStream = serverSocket.getInputStream();
             do {
                 if (inputStream.available() != 0) {
@@ -53,5 +54,13 @@ public class Connection {
     public void setConnectionParameters(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
+    }
+
+    public void connect() {
+        try {
+            serverSocket = new Socket(hostName,portNumber);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

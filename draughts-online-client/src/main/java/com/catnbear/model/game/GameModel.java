@@ -1,10 +1,12 @@
 package com.catnbear.model.game;
 
+import com.catnbear.communication.Connection;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameModel {
@@ -14,8 +16,12 @@ public class GameModel {
     private boolean moveAvailable;
     private Board board;
     private IntegerProperty roundLabelValue;
+    private Connection connection;
 
     private GameModel() {
+        connection = Connection.getInstance();
+        connection.setConnectionParameters("localhost",10001);
+        connection.connect();
         prepareNewRound();
     }
 
@@ -47,6 +53,8 @@ public class GameModel {
             moveAvailable = true;
             backupBoardModel();
         }
+        connection.sendData("Trains");
+        System.out.println(connection.waitForData());
     }
 
     private void nextPlayer() {

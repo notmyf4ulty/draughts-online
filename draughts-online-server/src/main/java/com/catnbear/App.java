@@ -43,16 +43,16 @@ public class App {
 
         while (true) {
             Socket clientSocket_1 = serverSocket.accept();
-            Socket clientSocket_2 = serverSocket.accept();
+//            Socket clientSocket_2 = serverSocket.accept();
 
-            MyThread thread_1 = new MyThread(clientSocket_1, clientSocket_2, portNumber);
+            MyThread thread_1 = new MyThread(clientSocket_1, clientSocket_1, portNumber);
             System.out.println("Client 1 connected.");
-            MyThread thread_2 = new MyThread(clientSocket_2, clientSocket_1, portNumber);
+            MyThread thread_2 = new MyThread(clientSocket_1, clientSocket_1, portNumber);
             System.out.println("Client 2 connected.");
 
 
             thread_1.start();
-            thread_2.start();
+//            thread_2.start();
         }
     }
 
