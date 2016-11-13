@@ -8,6 +8,7 @@ public class Board extends Observable {
     private Field [][] boardBackup;
     private GameModel gameModel;
     private boolean multiBeatMode;
+    private Field multiBeatingPieceField;
 
     public Board() {
         board = generateBoard();
@@ -48,12 +49,20 @@ public class Board extends Observable {
     public void chooseField(Position position) {
         Field chosenField = board[position.getX()][position.getY()];
         if (gameModel.isMoveAvailable()) {
-            Field activePieceField = getFieldOfActivePiece();
+            Field activePieceField;
+            if (multiBeatMode) {
+                activePieceField = multiBeatingPieceField;
+            } else {
+                activePieceField = getFieldOfActivePiece();
+            }
+
             if (activePieceField != null) {
                 moveActivePiece(activePieceField, chosenField);
             }
             if (chosenField.containsPiece()) {
-                selectPiece(chosenField);
+                if (!multiBeatMode) {
+                    selectPiece(chosenField);
+                }
             }
             setChanged();
             notifyObservers();
@@ -87,7 +96,9 @@ public class Board extends Observable {
                     break;
             }
         }
-        resetSelection();
+        if (!multiBeatMode) {
+            resetSelection();
+        }
     }
 
     private boolean isProperDirection(Position fromPosition, Position toPosition) {
@@ -114,7 +125,8 @@ public class Board extends Observable {
         int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
         int y = (toField.getPosition().getY() + fromField.getPosition().getY()) / 2;
         Field enemyField = board[x][y];
-        if (enemyField.containsPiece() && !enemyField.getPiece().getPlayer().equals(activePlayer)) {
+        if (enemyField.containsPiece() &&
+                !enemyField.getPiece().getPlayer().equals(activePlayer)) {
             enemyField.resetPiece();
             movePiece(fromField,toField);
             multiBeatMode = isOpponentToBeatAround(toField);
@@ -124,7 +136,13 @@ public class Board extends Observable {
 
     private boolean isOpponentToBeatAround(Field field) {
         Field [] opponentFields = getNeighbouringOpponents(field);
-        return isPlaceBehindOpponents(field, opponentFields);
+        if (isPlaceBehindOpponents(field, opponentFields)) {
+            multiBeatingPieceField = field;
+            return true;
+        } else {
+            multiBeatingPieceField = null;
+        }
+        return false;
     }
 
     private Field [] getNeighbouringOpponents(Field field) {
@@ -133,7 +151,10 @@ public class Board extends Observable {
         for (Position position : neighbouringPositions) {
             Field opponentField = board[position.getX()][position.getY()];
             if (opponentField.containsPiece() &&
-                    !opponentField.getPiece().getPlayer().equals(gameModel.getActivePlayer())) {
+                    !opponentField
+                            .getPiece()
+                            .getPlayer()
+                            .equals(gameModel.getActivePlayer())) {
                 opponentFields.add(opponentField);
             }
         }

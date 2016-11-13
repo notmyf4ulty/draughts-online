@@ -35,16 +35,18 @@ public class GameModel {
     }
 
     public void prepareNewRound() {
-        if (roundLabelValue == null) {
-            activePlayer = drawPlayer();
-            activePlayerLabelText = new SimpleStringProperty(activePlayer.toString());
-            roundLabelValue = new SimpleIntegerProperty(0);
-        } else {
-            nextPlayer();
-            roundLabelValue.setValue(roundLabelValue.getValue() + 1);
+        if (!moveAvailable) {
+            if (roundLabelValue == null) {
+                activePlayer = drawPlayer();
+                activePlayerLabelText = new SimpleStringProperty(activePlayer.toString());
+                roundLabelValue = new SimpleIntegerProperty(0);
+            } else {
+                nextPlayer();
+                roundLabelValue.setValue(roundLabelValue.getValue() + 1);
+            }
+            moveAvailable = true;
+            backupBoardModel();
         }
-        moveAvailable = true;
-        backupBoardModel();
     }
 
     private void nextPlayer() {
