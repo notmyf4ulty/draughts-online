@@ -105,7 +105,7 @@ public class Board extends Observable {
         if(Position.getMoveDistance(fromPosition,toPosition).equals(MoveDistance.ONE_FIELD_DISTANCE)) {
             int yFrom = fromPosition.getY();
             int yTo = toPosition.getY();
-            switch (gameModel.getActivePlayer()) {
+            switch (gameModel.getPlayer()) {
                 case WHITE:
                     return yTo > yFrom;
                 case BLACK:
@@ -125,7 +125,7 @@ public class Board extends Observable {
     }
 
     private void movePieceByTwoFields(Field fromField, Field toField) {
-        Player activePlayer = gameModel.getActivePlayer();
+        Player activePlayer = gameModel.getPlayer();
         int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
         int y = (toField.getPosition().getY() + fromField.getPosition().getY()) / 2;
         Field enemyField = board[x][y];
@@ -160,7 +160,7 @@ public class Board extends Observable {
                     !opponentField
                             .getPiece()
                             .getPlayer()
-                            .equals(gameModel.getActivePlayer())) {
+                            .equals(gameModel.getPlayer())) {
                 opponentFields.add(opponentField);
             }
         }
@@ -191,7 +191,7 @@ public class Board extends Observable {
         if (opponentX != 0 && opponentY != 0) {
             Field opponentField = board[opponentX][opponentY];
             if (opponentField.containsPiece()) {
-                return !opponentField.getPiece().getPlayer().equals(gameModel.getActivePlayer());
+                return !opponentField.getPiece().getPlayer().equals(gameModel.getPlayer());
             }
         }
         return false;
@@ -199,7 +199,7 @@ public class Board extends Observable {
 
     private void selectPiece(Field field) {
         resetSelection();
-        Player activePlayer = gameModel.getActivePlayer();
+        Player activePlayer = gameModel.getPlayer();
         if (field.getPiece().getPlayer().equals(activePlayer)) {
             field.selectPiece();
         }

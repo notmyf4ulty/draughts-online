@@ -51,6 +51,12 @@ public class App {
             configurationThread_2.start();
             System.out.println("Client 2 connected.");
 
+            GameThread gameThread_1 = new ConfigurationThread(clientSocket_1, portNumber);
+            gameThread_1.start();
+
+            GameThread gameThread_2 = new ConfigurationThread(clientSocket_1, portNumber);
+            gameThread_1.start();
+
         }
     }
 }

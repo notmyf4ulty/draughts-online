@@ -6,12 +6,11 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameModel {
     private static GameModel instance = null;
-    private Player activePlayer;
+    private Player player;
     private StringProperty activePlayerLabelText;
     private boolean moveAvailable;
     private Board board;
@@ -36,18 +35,17 @@ public class GameModel {
         return (ThreadLocalRandom.current().nextInt(0,2) == 0) ? Player.WHITE : Player.BLACK;
     }
 
-    Player getActivePlayer() {
-        return activePlayer;
+    Player getPlayer() {
+        return player;
     }
 
     public void prepareNewRound() {
         if (!moveAvailable) {
             if (roundLabelValue == null) {
-                activePlayer = joinGame();
-                activePlayerLabelText = new SimpleStringProperty(activePlayer.toString());
-                roundLabelValue = new SimpleIntegerProperty(0);
+                initializeGame();
             } else {
-                nextPlayer();
+                waitForNextRound();
+//                nextRound();
                 roundLabelValue.setValue(roundLabelValue.getValue() + 1);
             }
             moveAvailable = true;
@@ -77,13 +75,25 @@ public class GameModel {
         return player;
     }
 
-    private void nextPlayer() {
-        if (activePlayer.equals(Player.WHITE)) {
-            activePlayer = Player.BLACK;
+    private void initializeGame() {
+        player = joinGame();
+        activePlayerLabelText = new SimpleStringProperty(player.toString());
+        roundLabelValue = new SimpleIntegerProperty(0);
+    }
+
+    private boolean waitForNextRound() {
+        connection.sendData("ready");
+        String response = connection.waitForData();
+        return response.equals("ok");
+    }
+
+    private void nextRound() {
+        if (player.equals(Player.WHITE)) {
+            player = Player.BLACK;
         } else {
-            activePlayer = Player.WHITE;
+            player = Player.WHITE;
         }
-        activePlayerLabelText.setValue(activePlayer.toString());
+        activePlayerLabelText.setValue(player.toString());
     }
 
     private void backupBoardModel() {
