@@ -14,8 +14,6 @@ public class Board extends Observable {
         board = generateBoard();
         backupBoard();
         gameModel = GameModel.getInstance();
-        gameModel.assignBoardModel(this);
-        gameModel.prepareNewRound();
         multiBeatMode = false;
     }
 

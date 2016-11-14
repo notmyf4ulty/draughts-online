@@ -49,6 +49,7 @@ public class ConfigurationThread extends Thread {
                     default:
                         gameModel.setBoard(inputLine);
                         gameModel.setBoardAvailable(true);
+
                         break;
                 }
                 Thread.sleep(100);

@@ -19,6 +19,8 @@ public class GameModel {
         connection = Connection.getInstance();
         connection.setConnectionParameters("localhost",10001);
         connectionLost.setValue(connection.connect());
+        activePlayerLabelText = new SimpleStringProperty("");
+        communicateLabelText = new SimpleStringProperty("");
     }
 
     public static GameModel getInstance() {
@@ -65,11 +67,14 @@ public class GameModel {
 
     private void initializeGame() {
         player = joinGame();
-        if (player.equals(Player.BLACK)) {
-            waitForNextRound();
-        }
-        activePlayerLabelText = new SimpleStringProperty(player.toString());
+        activePlayerLabelText.setValue(player.toString());
         gameStarted = true;
+        if (player.equals(Player.BLACK)) {
+            communicateLabelText.setValue("startwait");
+            waitForNextRound();
+            communicateLabelText.setValue("start");
+        }
+
     }
 
     private void waitForNextRound() {
