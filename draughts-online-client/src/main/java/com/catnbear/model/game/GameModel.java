@@ -1,26 +1,22 @@
 package com.catnbear.model.game;
 
 import com.catnbear.communication.Connection;
+import com.catnbear.utilities.GuiModifier;
 import javafx.beans.property.*;
 
 public class GameModel {
     private static GameModel instance = null;
     private Player player;
     private StringProperty activePlayerLabelText;
-    private StringProperty communicateLabelText;
     private boolean moveAvailable;
     private Board board;
     private boolean gameStarted;
     private Connection connection;
-    private BooleanProperty connectionLost;
+    private GameStatus gameStatus;
 
     private GameModel() {
-        connectionLost = new SimpleBooleanProperty(false);
-        connection = Connection.getInstance();
-        connection.setConnectionParameters("localhost",10001);
-        connectionLost.setValue(connection.connect());
+        gameStatus = new GameStatus();
         activePlayerLabelText = new SimpleStringProperty("");
-        communicateLabelText = new SimpleStringProperty("");
     }
 
     public static GameModel getInstance() {
@@ -32,6 +28,21 @@ public class GameModel {
 
     Player getPlayer() {
         return player;
+    }
+
+    private boolean establishConnection() {
+        connection = Connection.getInstance();
+        connection.setConnectionParameters("localhost",10001);
+        return connection.connect();
+    }
+
+    public void startNewGame() {
+        gameStatus.setStatusState(GameStatus.StatusState.CONNECTING_TO_SERVER);
+        if (establishConnection()) {
+            gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_SECOND_PLAYER);
+        } else {
+            gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
+        }
     }
 
     public void prepareNewRound() {
@@ -70,9 +81,7 @@ public class GameModel {
         activePlayerLabelText.setValue(player.toString());
         gameStarted = true;
         if (player.equals(Player.BLACK)) {
-            communicateLabelText.setValue("startwait");
             waitForNextRound();
-            communicateLabelText.setValue("start");
         }
 
     }
@@ -97,14 +106,6 @@ public class GameModel {
         moveAvailable = true;
     }
 
-    public void establishConnection() {
-        if(connection.connect()) {
-
-        } else {
-
-        }
-    }
-
     public void surrender() {
 
     }
@@ -125,7 +126,7 @@ public class GameModel {
         return activePlayerLabelText;
     }
 
-    public StringProperty communicateLabelTextProperty() {
-        return communicateLabelText;
+    public GameStatus getGameStatus() {
+        return gameStatus;
     }
 }

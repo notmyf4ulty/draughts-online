@@ -6,37 +6,50 @@
 <?import javafx.scene.control.Label?>
 
 <?import javafx.scene.layout.AnchorPane?>
-<HBox fx:id="mainPane"
+<VBox fx:id="mainPane"
       fx:controller="com.catnbear.gui.BoardWindowController"
       xmlns:fx="http://javafx.com/fxml">
-    <VBox fx:id="boardPane"
-          style="-fx-border-color: #DEB887; -fx-border-width: 3; -fx-border-style: solid;">
-        <GridPane fx:id="boardGrid"/>
+    <HBox>
+        <VBox fx:id="boardPane"
+              style="-fx-border-color: #DEB887; -fx-border-width: 3; -fx-border-style: solid;">
+            <GridPane fx:id="boardGrid"/>
+        </VBox>
+        <AnchorPane style="-fx-background-color: #c5925e;">
+            <GridPane AnchorPane.bottomAnchor="5"
+                      AnchorPane.topAnchor="5"
+                      AnchorPane.leftAnchor="5"
+                      AnchorPane.rightAnchor="5"
+                      vgap="2">
+                <HBox GridPane.rowIndex="0"
+                      GridPane.fillWidth="true"
+                      maxWidth="Infinity">
+                    <Label text="Your color: "/>
+                    <Label fx:id="activePlayerLabel"/>
+                </HBox>
+                <Button fx:id="endTurnButton"
+                        text="End turn" onAction="#endTurnButtonCallback"
+                        GridPane.rowIndex="1"
+                        GridPane.fillWidth="true"
+                        maxWidth="Infinity"/>
+                <Button fx:id="resetTurnButton"
+                        text="Reset turn" onAction="#resetTurnButtonCallback"
+                        GridPane.rowIndex="2"
+                        GridPane.fillWidth="true"
+                        maxWidth="Infinity"/>
+                <Button fx:id="surrenderButton"
+                        text="Surrender" onAction="#surrenderButtonCallback"
+                        GridPane.rowIndex="3"
+                        GridPane.fillWidth="true"
+                        maxWidth="Infinity"/>
+                <Button fx:id="startGameButton"
+                        text="Start game" onAction="#startGameButtonCallback"
+                        GridPane.rowIndex="4"
+                        GridPane.fillWidth="true"
+                        maxWidth="Infinity"/>
+            </GridPane>
+        </AnchorPane>
+    </HBox>
+    <VBox>
+        <Label fx:id="communicateLabel"/>
     </VBox>
-    <AnchorPane style="-fx-background-color: #c5925e;">
-        <GridPane AnchorPane.bottomAnchor="5"
-                  AnchorPane.topAnchor="5"
-                  AnchorPane.leftAnchor="5"
-                  AnchorPane.rightAnchor="5"
-                  vgap="2">
-            <HBox GridPane.rowIndex="0"
-                  GridPane.fillWidth="true"
-                  maxWidth="Infinity">
-                <Label text="Your color: "/>
-                <Label fx:id="activePlayerLabel"/>
-            </HBox>
-            <Button text="End turn" onAction="#endTurnButtonCallback"
-                    GridPane.rowIndex="1"
-                    GridPane.fillWidth="true"
-                    maxWidth="Infinity"/>
-            <Button text="Reset turn" onAction="#resetTurnButtonCallback"
-                    GridPane.rowIndex="2"
-                    GridPane.fillWidth="true"
-                    maxWidth="Infinity"/>
-            <Button text="Surrender" onAction="#surrenderButtonCallback"
-                    GridPane.rowIndex="3"
-                    GridPane.fillWidth="true"
-                    maxWidth="Infinity"/>
-        </GridPane>
-    </AnchorPane>
-</HBox>
+</VBox>

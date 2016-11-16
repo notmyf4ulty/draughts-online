@@ -6,15 +6,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Dialog;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class BoardWindowController {
 
     @FXML
-    private HBox mainPane;
+    private VBox mainPane;
 
     @FXML
     private VBox boardPane;
@@ -22,51 +21,44 @@ public class BoardWindowController {
     @FXML
     private Label activePlayerLabel;
 
+    @FXML
+    private Button endTurnButton;
+
+    @FXML
+    private Button resetTurnButton;
+
+    @FXML
+    private Button surrenderButton;
+
+    @FXML
+    private Button startGameButton;
+
+    @FXML
+    private Label communicateLabel;
+
     private GameModel gameModel;
     private Board board;
 
     private Alert alertDialog;
+    private CommunicateListener communicateListener;
 
     @FXML
     private void initialize() {
         gameModel = GameModel.getInstance();
         activePlayerLabel.textProperty().bind(gameModel.activePlayerLabelTextProperty());
-        gameModel.communicateLabelTextProperty().addListener(new CommunicateListener());
         board = new Board();
         createBoard();
         gameModel.assignBoardModel(board);
-        gameModel.prepareNewRound();
+//        gameModel.prepareNewRound();
+        initialDisableGui();
+        communicateListener = new CommunicateListener();
+        gameModel.getGameStatus().addListener(communicateListener);
     }
 
 
-    private void createBoard() {
-        BoardView boardView = new BoardView(board);
-        boardPane.getChildren().add(boardView);
-    }
-
-    private class CommunicateListener implements ChangeListener<String> {
-        @Override
-        public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-            String value = observableValue.getValue();
-            switch (value) {
-                case "startwait":
-                    alertDialog = new Alert(Alert.AlertType.NONE);
-                    alertDialog.setContentText("You are second in queue.\nWait for your round.");
-                    alertDialog.show();
-                    break;
-                case "start":
-                    if (alertDialog != null) {
-                        alertDialog.close();
-                    }
-                    break;
-                case "lost":
-                    break;
-                case "win":
-                    break;
-                case "connlost":
-                    break;
-            }
-        }
+    @FXML
+    private void startGameButtonCallback() {
+        gameModel.startNewGame();
     }
 
     @FXML
@@ -84,5 +76,84 @@ public class BoardWindowController {
         gameModel.surrender();
     }
 
+    private void disableGui() {
+        endTurnButton.setDisable(true);
+        resetTurnButton.setDisable(true);
+        surrenderButton.setDisable(true);
+        startGameButton.setDisable(false);
+    }
+
+    private void initialDisableGui() {
+        endTurnButton.setDisable(true);
+        resetTurnButton.setDisable(true);
+        surrenderButton.setDisable(true);
+        startGameButton.setDisable(false);
+    }
+
+    private void enableGui() {
+        endTurnButton.setDisable(true);
+        resetTurnButton.setDisable(true);
+        surrenderButton.setDisable(true);
+        startGameButton.setDisable(true);
+    }
+
+    private void createBoard() {
+        BoardView boardView = new BoardView(board);
+        boardPane.getChildren().add(boardView);
+    }
+
+    private void gameDeinitialize() {
+        gameModel.getGameStatus().removeListener(communicateListener);
+    }
+
+    private class CommunicateListener implements ChangeListener<Boolean> {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+            if (observableValue.getValue() == true) {
+                switch (gameModel.getGameStatus().getStatusState()) {
+                    case NOT_STARTED:
+                        initNewGame();
+                        break;
+                    case CONNECTING_TO_SERVER:
+                        connectToServer();
+                        break;
+                    case WAITING_FOR_SECOND_PLAYER:
+                        waitForSecondPlayer();
+                        break;
+                    case WAITING_FOR_TURN:
+                        break;
+                    case TURN:
+                        break;
+                    case LOST:
+                        break;
+                    case WON:
+                        break;
+                    case CONNECTION_ERROR:
+                        handleConnectionError();
+                        break;
+                }
+            }
+        }
+    }
+
+    private void initNewGame() {
+        initialDisableGui();
+        communicateLabel.setText("Click 'Start Game'");
+    }
+
+    private void connectToServer() {
+        disableGui();
+        communicateLabel.setText("Connecting to server...");
+    }
+
+    private void waitForSecondPlayer() {
+        disableGui();
+        communicateLabel.setText("Waiting for second player...");
+    }
+
+    private void handleConnectionError() {
+        disableGui();
+        communicateLabel.setText("Connection error.");
+    }
 
 }
