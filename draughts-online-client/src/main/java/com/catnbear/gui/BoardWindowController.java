@@ -58,6 +58,7 @@ public class BoardWindowController {
 
     @FXML
     private void startGameButtonCallback() {
+        disableGui();
         gameModel.startNewGame();
     }
 
@@ -74,27 +75,6 @@ public class BoardWindowController {
     @FXML
     private void surrenderButtonCallback() {
         gameModel.surrender();
-    }
-
-    private void disableGui() {
-        endTurnButton.setDisable(true);
-        resetTurnButton.setDisable(true);
-        surrenderButton.setDisable(true);
-        startGameButton.setDisable(false);
-    }
-
-    private void initialDisableGui() {
-        endTurnButton.setDisable(true);
-        resetTurnButton.setDisable(true);
-        surrenderButton.setDisable(true);
-        startGameButton.setDisable(false);
-    }
-
-    private void enableGui() {
-        endTurnButton.setDisable(true);
-        resetTurnButton.setDisable(true);
-        surrenderButton.setDisable(true);
-        startGameButton.setDisable(true);
     }
 
     private void createBoard() {
@@ -179,5 +159,26 @@ public class BoardWindowController {
     private void handleConnectionError() {
         disableGui();
         communicateLabel.setText("Connection error.");
+    }
+
+    private void disableGui() {
+        endTurnButton.setDisable(true);
+        resetTurnButton.setDisable(true);
+        surrenderButton.setDisable(true);
+        startGameButton.setDisable(true);
+    }
+
+    private void initialDisableGui() {
+        endTurnButton.setDisable(true);
+        resetTurnButton.setDisable(true);
+        surrenderButton.setDisable(true);
+        startGameButton.setDisable(false);
+    }
+
+    private void enableGui() {
+        endTurnButton.setDisable(false);
+        resetTurnButton.setDisable(false);
+        surrenderButton.setDisable(false);
+        startGameButton.setDisable(true);
     }
 }

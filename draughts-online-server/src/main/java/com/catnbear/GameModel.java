@@ -6,6 +6,7 @@ class GameModel {
     volatile private String board;
     private volatile boolean boardAvailable;
     volatile boolean gameFinished;
+    volatile int playerCounter;
 
     private GameModel() {
     }
@@ -35,6 +36,16 @@ class GameModel {
 //        }
 //        return true;
         return boardAvailable;
+    }
+
+    void addPlayer() {
+        if (++playerCounter > 2) {
+            playerCounter = 1;
+        }
+    }
+
+    boolean isGameReady() {
+        return playerCounter == 2;
     }
 
     void setBoardAvailable(boolean boardAvailable) {
