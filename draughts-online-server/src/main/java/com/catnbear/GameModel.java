@@ -1,6 +1,6 @@
 package com.catnbear;
 
-public class GameModel {
+class GameModel {
     private static GameModel instance;
     volatile private int joinCounter;
     volatile private String board;
@@ -21,15 +21,15 @@ public class GameModel {
         return joinCounter++;
     }
 
-    public String getBoard() {
+    String getBoard() {
         return board;
     }
 
-    public void setBoard(String board) {
+    void setBoard(String board) {
         this.board = board;
     }
 
-    public boolean isBoardAvailable() {
+    boolean isBoardAvailable() {
 //        if (boardAvailable) {
 //            boardAvailable = false;
 //        }
@@ -37,7 +37,7 @@ public class GameModel {
         return boardAvailable;
     }
 
-    public void setBoardAvailable(boolean boardAvailable) {
+    void setBoardAvailable(boolean boardAvailable) {
         this.boardAvailable = boardAvailable;
     }
 }

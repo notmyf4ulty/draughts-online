@@ -6,41 +6,58 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class GameThread extends Thread {
-    private Socket socket;
+class GameThread extends Thread {
+    private static final String PLAYER_WHITE_ASSIGN_MESSAGE = "w";
+    private static final String PLAYER_BLACK_ASSIGN_MESSAGE = "b";
+    private static final String JOIN_NEW_PLAYER_MESSAGE = "join";
+    private static final String PLAYER_WAITS_MESSAGE = "wait";
+    private static final String PLAYER_DISCONNECTION_MESSAGE = "done";
+    private static final long THREAD_SLEEP_TIME = 100;
+
+    private Socket playerSocket;
     private int portNumber;
     private GameModel gameModel;
 
-    public GameThread (Socket socket, int portNumber) {
-        this.socket = socket;
+    GameThread(Socket playerSocket, int portNumber) {
+        this.playerSocket = playerSocket;
         this.portNumber = portNumber;
-        this.gameModel = GameModel.getInstance();
+        gameModel = GameModel.getInstance();
     }
 
     @Override
     public void run() {
         try (
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))
+                PrintWriter out =
+                        new PrintWriter(playerSocket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(playerSocket.getInputStream()))
         ) {
+            int joinCounter = gameModel.getJoinCounter();
             String inputLine;
             do {
-                System.out.println("waiting for new line");
                 inputLine = in.readLine();
-                System.out.println("Got: " + inputLine);
                 switch (inputLine) {
-                    case "wait":
+                    case JOIN_NEW_PLAYER_MESSAGE:
+                        if (joinCounter % 2 == 0) {
+                            out.println(PLAYER_WHITE_ASSIGN_MESSAGE);
+                        } else {
+                            out.println(PLAYER_BLACK_ASSIGN_MESSAGE);
+                        }
+                        break;
+                    case PLAYER_WAITS_MESSAGE:
                         while(!gameModel.isBoardAvailable()) {
-                            Thread.sleep(100);
+                            Thread.sleep(THREAD_SLEEP_TIME);
                         }
                         out.println(gameModel.getBoard());
+                        gameModel.setBoardAvailable(false);
                         break;
                     default:
                         gameModel.setBoard(inputLine);
                         gameModel.setBoardAvailable(true);
                         break;
                 }
-            } while (!inputLine.equals("done"));
+                Thread.sleep(THREAD_SLEEP_TIME);
+            } while (!inputLine.equals(PLAYER_DISCONNECTION_MESSAGE));
         } catch (IOException e) {
             System.out.println("Exception caught when trying to listen on port "
                     + portNumber + " or listening for a connection");

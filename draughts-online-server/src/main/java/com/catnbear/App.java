@@ -34,29 +34,33 @@ import java.net.*;
 import java.io.*;
 
 public class App {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         int portNumber = 10001;
 
-        ServerSocket serverSocket =
-                new ServerSocket(portNumber);
+        ServerSocket serverSocket = null;
 
-        while (true) {
-            Socket clientSocket_1 = serverSocket.accept();
-            ConfigurationThread configurationThread_1 = new ConfigurationThread(clientSocket_1, portNumber);
-            configurationThread_1.start();
-            System.out.println("Client 1 connected.");
-            Socket clientSocket_2 = serverSocket.accept();
-            ConfigurationThread configurationThread_2 = new ConfigurationThread(clientSocket_2, portNumber);
-            configurationThread_2.start();
-            System.out.println("Client 2 connected.");
+        try {
+            serverSocket = new ServerSocket(portNumber);
+        } catch (IOException e) {
+            System.out.println("Cannot create socket.");
+        }
 
-//            GameThread gameThread_1 = new GameThread(clientSocket_1, portNumber);
-//            gameThread_1.start();
-//
-//            GameThread gameThread_2 = new GameThread(clientSocket_2, portNumber);
-//            gameThread_2.start();
-
+        if (serverSocket != null) {
+            while (true) {
+                try {
+                    Socket clientSocket_1 = serverSocket.accept();
+                    GameThread gameThread_1 = new GameThread(clientSocket_1, portNumber);
+                    gameThread_1.start();
+                    System.out.println("Client 1 connected.");
+                    Socket clientSocket_2 = serverSocket.accept();
+                    GameThread gameThread_2 = new GameThread(clientSocket_2, portNumber);
+                    gameThread_2.start();
+                    System.out.println("Client 2 connected.");
+                } catch (IOException e) {
+                    System.out.println("Connection problem. Reseting game.");
+                }
+            }
         }
     }
 }
