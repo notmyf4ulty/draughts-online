@@ -121,12 +121,16 @@ public class BoardWindowController {
                         waitForSecondPlayer();
                         break;
                     case WAITING_FOR_TURN:
+                        waitForTurn();
                         break;
                     case TURN:
+                        playerTurn();
                         break;
                     case LOST:
+                        lost();
                         break;
                     case WON:
+                        won();
                         break;
                     case CONNECTION_ERROR:
                         handleConnectionError();
@@ -151,9 +155,29 @@ public class BoardWindowController {
         communicateLabel.setText("Waiting for second player...");
     }
 
+    private void waitForTurn() {
+        disableGui();
+        communicateLabel.setText("Wait for your turn.");
+    }
+
+    private void playerTurn() {
+        enableGui();
+        communicateLabel.setText("Your turn");
+    }
+
+    private void lost() {
+        disableGui();
+        communicateLabel.setText("You lost.");
+    }
+
+    private void won() {
+        disableGui();
+        communicateLabel.setText("You won.");
+    }
+
+
     private void handleConnectionError() {
         disableGui();
         communicateLabel.setText("Connection error.");
     }
-
 }
