@@ -6,7 +6,7 @@
 
 <StackPane fx:controller="com.catnbear.gui.WelcomeScreenController"
            xmlns:fx="http://javafx.com/fxml"
-           fx:id="menuPane">
+           fx:id="mainPane">
     <AnchorPane>
         <GridPane AnchorPane.bottomAnchor="5"
                   AnchorPane.topAnchor="5"
@@ -17,7 +17,7 @@
             <Button GridPane.rowIndex="1" text="Play" onAction="#playButtonCallback"
                     GridPane.fillWidth="true"
                     maxWidth="Infinity"/>
-            <Button GridPane.rowIndex="2" text="Settings" onAction="#setttingsButtonCallback"
+            <Button GridPane.rowIndex="2" text="Settings" onAction="#settingsButtonCallback"
                     GridPane.fillWidth="true"
                     maxWidth="Infinity"/>
             <Button GridPane.rowIndex="3" text="Exit" onAction="#exitButtonCallback"

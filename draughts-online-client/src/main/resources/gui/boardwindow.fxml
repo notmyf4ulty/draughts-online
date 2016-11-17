@@ -14,7 +14,7 @@
         <VBox fx:id="boardPane"
               style="-fx-border-color: #DEB887; -fx-border-width: 3; -fx-border-style: solid;">
         </VBox>
-        <AnchorPane style="-fx-background-color: #c5925e;">
+        <AnchorPane style="-fx-background-color: #c5925e;" minWidth="100">
             <GridPane AnchorPane.bottomAnchor="5"
                       AnchorPane.topAnchor="5"
                       AnchorPane.leftAnchor="5"
@@ -22,7 +22,7 @@
                       vgap="2">
                 <HBox GridPane.rowIndex="0"
                       GridPane.fillWidth="true"
-                      maxWidth="Infinity">
+                      minWidth="120" maxWidth="Infinity">
                     <Label text="Your color: "/>
                     <Label fx:id="playerLabel"/>
                 </HBox>

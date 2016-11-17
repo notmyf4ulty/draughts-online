@@ -93,7 +93,7 @@ class BoardPane extends GridPane implements Observer {
         FieldPane fieldPane = getFieldPane(position);
         PieceShape pieceShape = new PieceShape(piece);
         if (fieldPane != null) {
-            fieldPane.putPieceView(pieceShape);
+            fieldPane.putPieceShape(pieceShape);
         }
     }
 
