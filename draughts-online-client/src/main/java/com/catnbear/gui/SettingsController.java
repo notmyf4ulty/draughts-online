@@ -1,6 +1,6 @@
 package com.catnbear.gui;
 
-import com.catnbear.communication.ConnectionParams;
+import com.catnbear.communication.ConnectionParameters;
 import com.catnbear.utilities.GuiModifier;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -20,29 +20,29 @@ public class SettingsController {
     @FXML
     private TextField portNumberTextField;
 
-    private ConnectionParams connectionParams;
+    private ConnectionParameters connectionParameters;
 
     @FXML
     private void initialize() {
-        connectionParams = ConnectionParams.getInstance();
+        connectionParameters = ConnectionParameters.getInstance();
     }
 
     @FXML
     private void defaultHostNameButtonCallback() {
-        hostNameTextField.setText(ConnectionParams.getDefaultHostName());
+        hostNameTextField.setText(ConnectionParameters.getDefaultHostName());
     }
 
     @FXML
     private void defaultPortNumberButtonCallback() {
-        portNumberTextField.setText(Integer.toString(ConnectionParams.getDefaultPortNumber()));
+        portNumberTextField.setText(Integer.toString(ConnectionParameters.getDefaultPortNumber()));
     }
 
     @FXML
     private void saveButtonCallback() {
         if (!(hostNameTextField.getText().equals("") || portNumberTextField.equals(""))) {
             try {
-                connectionParams.setHostName(hostNameTextField.getText());
-                connectionParams.setPortNumber(Integer.parseInt(portNumberTextField.getText()));
+                connectionParameters.setHostName(hostNameTextField.getText());
+                connectionParameters.setPortNumber(Integer.parseInt(portNumberTextField.getText()));
             } catch (NumberFormatException e) {
                 cleanTextFields();
             }
@@ -52,9 +52,9 @@ public class SettingsController {
     }
 
     private void cleanTextFields() {
-        connectionParams.setDefaultParameters();
-        hostNameTextField.setText(connectionParams.getHostName());
-        portNumberTextField.setText(Integer.toString(connectionParams.getPortNumber()));
+        connectionParameters.setDefaultParameters();
+        hostNameTextField.setText(connectionParameters.getHostName());
+        portNumberTextField.setText(Integer.toString(connectionParameters.getPortNumber()));
     }
 
     @FXML

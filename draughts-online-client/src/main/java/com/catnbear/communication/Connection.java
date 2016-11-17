@@ -141,8 +141,10 @@ public class Connection {
                 } while (inputDataBuffer == null);
             } catch (IOException exception) {
                 exception.printStackTrace();
+                return null;
             } catch (InterruptedException exception) {
                 exception.printStackTrace();
+                return null;
             }
             return null;
         }

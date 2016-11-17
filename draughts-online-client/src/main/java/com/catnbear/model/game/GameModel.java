@@ -1,7 +1,7 @@
 package com.catnbear.model.game;
 
 import com.catnbear.communication.Connection;
-import com.catnbear.communication.ConnectionParams;
+import com.catnbear.communication.ConnectionParameters;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 
@@ -42,10 +42,10 @@ public class GameModel {
     }
 
     private boolean establishConnection() {
-        ConnectionParams connectionParams = ConnectionParams.getInstance();
+        ConnectionParameters connectionParameters = ConnectionParameters.getInstance();
         connection = Connection.getInstance();
         initializeConnectionHandlers();
-        connection.setConnectionParameters(connectionParams.getHostName(),connectionParams.getPortNumber());
+        connection.setConnectionParameters(connectionParameters.getHostName(), connectionParameters.getPortNumber());
         return connection.connect();
     }
 
