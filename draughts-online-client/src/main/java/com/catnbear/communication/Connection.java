@@ -62,10 +62,6 @@ public class Connection {
         }
     }
 
-    private boolean isTimeout(long startTime) {
-        return System.currentTimeMillis() - startTime < WAIT_FOR_DATA_TIMEOUT;
-    }
-
     private class DataReceiver extends Task<Void> {
         @Override
         protected Void call() throws Exception {
