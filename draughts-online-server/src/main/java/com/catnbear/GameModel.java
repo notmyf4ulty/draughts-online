@@ -50,6 +50,8 @@ class GameModel {
         return playerId++;
     }
 
+
+
     void setBoardAvailable(int updatePlayerId) {
         lastUpdatePlayerId = updatePlayerId;
         boardAvailable = true;

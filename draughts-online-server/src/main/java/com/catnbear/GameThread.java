@@ -13,6 +13,8 @@ class GameThread extends Thread {
     private static final String JOIN_NEW_PLAYER_CLIENT_MESSAGE = "join";
     private static final String PLAYER_START_GAME_WAIT_CLIENT_MESSAGE = "startready";
     private static final String PLAYER_NEXT_TURN_WAIT_CLIENT_MESSAGE = "turnready";
+    private static final String PLAYER_WON_CLIENT_MESSAGE = "won";
+    private static final String PLAYER_LOST_SERVER_MESSAGE = "lost";
     private static final String PLAYER_DISCONNECTION_MESSAGE = "done";
     private static final long THREAD_SLEEP_TIME = 100;
 
@@ -66,6 +68,14 @@ class GameThread extends Thread {
                             Thread.sleep(THREAD_SLEEP_TIME);
                         }
                         outputLine = gameModel.getBoard();
+                        if (outputLine.equals(PLAYER_LOST_SERVER_MESSAGE)) {
+                            inputLine = PLAYER_DISCONNECTION_MESSAGE;
+                        }
+                        break;
+                    case PLAYER_WON_CLIENT_MESSAGE:
+                        gameModel.setBoard(PLAYER_LOST_SERVER_MESSAGE);
+                        inputLine = PLAYER_DISCONNECTION_MESSAGE;
+                        gameModel.setBoardAvailable(id);
                         break;
                     default:
                         System.out.println("Setting board: " + inputLine);

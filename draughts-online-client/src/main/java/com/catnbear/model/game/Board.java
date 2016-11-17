@@ -9,6 +9,7 @@ public class Board extends Observable {
     private GameModel gameModel;
     private boolean multiBeatMode;
     private Field multiBeatingPieceField;
+    private int enemyPiecesNumber;
 
     public Board() {
         board = generateBoard();
@@ -232,11 +233,12 @@ public class Board extends Observable {
         board = getCopy(boardBackup);
         multiBeatMode = false;
         multiBeatingPieceField = null;
+        enemyPiecesNumber = countPieces();
         setChanged();
         notifyObservers();
     }
 
-    public String prepareToSend() {
+    String prepareToSend() {
         String boardString = "";
         for (Field [] fields : board) {
             for (Field field : fields) {
@@ -258,7 +260,7 @@ public class Board extends Observable {
         return boardString;
     }
 
-    public boolean createBoardFromString(String boardString) {
+    boolean createBoardFromString(String boardString) {
         try {
             System.out.println("Creating board from String: " + boardString);
             String[] boardColumns = boardString.split(";");
@@ -287,6 +289,20 @@ public class Board extends Observable {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public int countPieces() {
+        int counter = 0;
+        for (int i = 0; i < BOARD_DIMENSION; i++) {
+            for (int j = 0; j < BOARD_DIMENSION; j++) {
+                Field field = board[i][j];
+                if (field.containsPiece() && !field.getPiece().getPlayer().equals(gameModel.getPlayer())) {
+                    counter++;
+                }
+            }
+        }
+        System.out.println("Returning " + counter);
+        return counter;
     }
 
     public Field[][] getBoard() {

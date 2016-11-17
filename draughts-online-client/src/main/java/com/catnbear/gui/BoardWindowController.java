@@ -2,6 +2,7 @@ package com.catnbear.gui;
 
 import com.catnbear.model.game.Board;
 import com.catnbear.model.game.GameModel;
+import com.catnbear.utilities.GuiModifier;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -50,7 +51,6 @@ public class BoardWindowController {
         board = new Board();
         createBoard();
         gameModel.assignBoardModel(board);
-//        gameModel.prepareNewRound();
         initialDisableGui();
         communicateListener = new CommunicateListener();
         gameModel.getGameStatus().addListener(communicateListener);
@@ -152,18 +152,18 @@ public class BoardWindowController {
 
     private void lost() {
         disableGui();
-        communicateLabel.setText("You lost.");
+        showExitMessageDialog("You lost");
     }
 
     private void won() {
         disableGui();
-        communicateLabel.setText("You won.");
+        showExitMessageDialog("You won");
     }
 
 
     private void handleConnectionError() {
         disableGui();
-        communicateLabel.setText("Connection error.");
+        showExitMessageDialog("Connection error.");
     }
 
     private void disableGui() {
@@ -190,5 +190,17 @@ public class BoardWindowController {
         resetTurnButton.setDisable(false);
         surrenderButton.setDisable(false);
         startGameButton.setDisable(true);
+    }
+
+    private void showExitMessageDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Message");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.setOnCloseRequest(dialogEvent -> {
+            GuiModifier.changeWindow(mainPane,"/gui/welcomescreen.fxml",this);
+            gameModel.resetGameModel();
+        });
+        alert.showAndWait();
     }
 }
