@@ -26,24 +26,29 @@
                     <Label text="Your color: "/>
                     <Label fx:id="activePlayerLabel"/>
                 </HBox>
+                <Button fx:id="startGameButton"
+                        text="Start game" onAction="#startGameButtonCallback"
+                        GridPane.rowIndex="1"
+                        GridPane.fillWidth="true"
+                        maxWidth="Infinity"/>
                 <Button fx:id="endTurnButton"
                         text="End turn" onAction="#endTurnButtonCallback"
-                        GridPane.rowIndex="1"
+                        GridPane.rowIndex="2"
                         GridPane.fillWidth="true"
                         maxWidth="Infinity"/>
                 <Button fx:id="resetTurnButton"
                         text="Reset turn" onAction="#resetTurnButtonCallback"
-                        GridPane.rowIndex="2"
+                        GridPane.rowIndex="3"
                         GridPane.fillWidth="true"
                         maxWidth="Infinity"/>
                 <Button fx:id="surrenderButton"
                         text="Surrender" onAction="#surrenderButtonCallback"
-                        GridPane.rowIndex="3"
+                        GridPane.rowIndex="4"
                         GridPane.fillWidth="true"
                         maxWidth="Infinity"/>
-                <Button fx:id="startGameButton"
-                        text="Start game" onAction="#startGameButtonCallback"
-                        GridPane.rowIndex="4"
+                <Button fx:id="exitGameButton"
+                        text="Exit game" onAction="#exitButtonCallback"
+                        GridPane.rowIndex="5"
                         GridPane.fillWidth="true"
                         maxWidth="Infinity"/>
             </GridPane>

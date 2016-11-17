@@ -14,6 +14,7 @@ class GameThread extends Thread {
     private static final String PLAYER_START_GAME_WAIT_CLIENT_MESSAGE = "startready";
     private static final String PLAYER_NEXT_TURN_WAIT_CLIENT_MESSAGE = "turnready";
     private static final String PLAYER_WON_CLIENT_MESSAGE = "won";
+    private static final String PLAYER_LOST_CLIENT_MESSAGE = "lost";
     private static final String PLAYER_LOST_SERVER_MESSAGE = "lost";
     private static final String PLAYER_WON_SERVER_MESSAGE = "won";
     private static final String PLAYER_DISCONNECTION_MESSAGE = "done";
@@ -79,6 +80,11 @@ class GameThread extends Thread {
                             inputLine = PLAYER_DISCONNECTION_MESSAGE;
                             gameModel.setBoardAvailable(id);
                             break;
+                        case PLAYER_LOST_CLIENT_MESSAGE:
+                            gameModel.setBoard(PLAYER_WON_SERVER_MESSAGE);
+                            inputLine = PLAYER_DISCONNECTION_MESSAGE;
+                            gameModel.setBoardAvailable(id);
+                            break;
                         default:
                             System.out.println("Setting board: " + inputLine);
                             gameModel.setBoard(inputLine);
@@ -105,5 +111,6 @@ class GameThread extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("Finishing game.");
     }
 }

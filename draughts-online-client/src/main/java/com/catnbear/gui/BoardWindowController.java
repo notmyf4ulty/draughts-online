@@ -24,6 +24,9 @@ public class BoardWindowController {
     private Label activePlayerLabel;
 
     @FXML
+    private Button startGameButton;
+
+    @FXML
     private Button endTurnButton;
 
     @FXML
@@ -33,7 +36,7 @@ public class BoardWindowController {
     private Button surrenderButton;
 
     @FXML
-    private Button startGameButton;
+    private Button exitGameButton;
 
     @FXML
     private Label communicateLabel;
@@ -77,6 +80,11 @@ public class BoardWindowController {
         gameModel.surrender();
     }
 
+    @FXML
+    private void exitButtonCallback() {
+        gameModel.exit();
+    }
+
     private void createBoard() {
         BoardView boardView = new BoardView(board);
         boardPane.getChildren().add(boardView);
@@ -117,6 +125,9 @@ public class BoardWindowController {
                         case CONNECTION_ERROR:
                             handleConnectionError();
                             break;
+                        case EXIT:
+                            handleExit();
+                            break;
                     }
                 });
             }
@@ -134,18 +145,17 @@ public class BoardWindowController {
     }
 
     private void waitForSecondPlayer() {
-        disableGui();
+        waitForSecondPlayerDisableGui();
         communicateLabel.setText("Waiting for second player...");
     }
 
     private void waitForTurn() {
-        System.out.println("Waiting for turn.");
-        disableGui();
+        waitForTurnDisableGui();
         communicateLabel.setText("Wait for your turn.");
     }
 
     private void playerTurn() {
-        enableGui();
+        turnEnableGui();
         communicateLabel.setText("Your turn");
     }
 
@@ -165,30 +175,45 @@ public class BoardWindowController {
         showExitMessageDialog("Connection error.");
     }
 
+    private void handleExit() {
+        showExitMessageDialog("Leaving a game.");
+    }
+
     private void disableGui() {
+        startGameButton.setDisable(true);
         endTurnButton.setDisable(true);
         resetTurnButton.setDisable(true);
         surrenderButton.setDisable(true);
-        startGameButton.setDisable(true);
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        exitGameButton.setDisable(true);
     }
 
     private void initialDisableGui() {
-        endTurnButton.setDisable(true);
-        resetTurnButton.setDisable(true);
-        surrenderButton.setDisable(true);
+        disableGui();
         startGameButton.setDisable(false);
     }
 
+    private void waitForSecondPlayerDisableGui() {
+        disableGui();
+        exitGameButton.setDisable(false);
+    }
+
+    private void waitForTurnDisableGui() {
+        disableGui();
+        surrenderButton.setDisable(false);
+    }
+
     private void enableGui() {
+        startGameButton.setDisable(false);
         endTurnButton.setDisable(false);
         resetTurnButton.setDisable(false);
         surrenderButton.setDisable(false);
+        exitGameButton.setDisable(false);
+    }
+
+    private void turnEnableGui() {
+        enableGui();
         startGameButton.setDisable(true);
+        exitGameButton.setDisable(true);
     }
 
     private void showExitMessageDialog(String message) {

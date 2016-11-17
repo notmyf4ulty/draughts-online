@@ -174,7 +174,7 @@ public class GameModel {
     private void initializeConnectionHandlers() {
         connection.addConnectionErrorListener((observableValue, aBoolean, t1) ->
                 gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR));
-        connection.addDataReadyListener((observableValue, aBoolean, t1) -> handleDataReady());
+        connection.addDataReadyListener((observablshiteValue, aBoolean, t1) -> handleDataReady());
     }
 
     private void newRound(String boardString) {
@@ -199,7 +199,12 @@ public class GameModel {
     }
 
     public void surrender() {
+        gameStatus.setStatusState(GameStatus.StatusState.LOST);
+        connection.sendData("lost");
+    }
 
+    public void exit() {
+        gameStatus.setStatusState(GameStatus.StatusState.EXIT);
     }
 
     public void assignBoardModel(Board board) {
@@ -228,7 +233,7 @@ public class GameModel {
         activePlayerLabelText = null;
         moveAvailable = false;
         board = null;
-        connection = null;
+        connection.resetConnection();
         gameStatus = null;
     }
 }

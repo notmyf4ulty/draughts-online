@@ -14,7 +14,8 @@ public class GameStatus {
         TURN,
         LOST,
         WON,
-        CONNECTION_ERROR
+        CONNECTION_ERROR,
+        EXIT;
     }
 
     private StatusState statusState;

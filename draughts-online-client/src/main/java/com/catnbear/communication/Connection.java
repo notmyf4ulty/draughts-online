@@ -9,8 +9,6 @@ import java.io.*;
 import java.net.Socket;
 
 public class Connection {
-    private static final long WAIT_FOR_DATA_TIMEOUT = 5000;
-
     private static Connection instance = null;
     private String hostName;
     private int portNumber;
@@ -20,7 +18,6 @@ public class Connection {
     private String dataBuffer;
     private BooleanProperty connectionErrorFlag;
     private BooleanProperty dataReadyFlag;
-
 
     private Connection() {
         connectionErrorFlag = new SimpleBooleanProperty(false);
@@ -68,7 +65,6 @@ public class Connection {
             System.out.print("Waiting for data...");
             dataBuffer = null;
             try {
-                long waitStartTime = System.currentTimeMillis();
                 do {
                     if (inputStream.available() != 0) {
                         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -79,7 +75,7 @@ public class Connection {
                         System.out.println(dataBuffer);
                     }
                     Thread.sleep(500);
-                } while (dataBuffer == null);// && isTimeout(waitStartTime));
+                } while (dataBuffer == null);
             } catch (IOException exception) {
                 exception.printStackTrace();
             } catch (InterruptedException exception) {
@@ -122,5 +118,17 @@ public class Connection {
         String result = dataBuffer;
         dataBuffer = null;
         return result;
+    }
+
+    public void resetConnection() {
+        instance = null;
+        hostName = null;
+        portNumber = 0;
+        serverSocket = null;
+        outWriter = null;
+        inputStream = null;
+        dataBuffer = null;
+        connectionErrorFlag = null;
+        dataReadyFlag = null;
     }
 }
