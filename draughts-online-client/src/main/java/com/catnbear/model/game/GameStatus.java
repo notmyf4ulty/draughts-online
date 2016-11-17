@@ -38,9 +38,13 @@ public class GameStatus {
         return statusState;
     }
 
-    public void setStatusState(StatusState statusState) {
-        this.statusState = statusState;
-        statusChangeFlag.setValue(true);
-        statusChangeFlag.setValue(false);
+    void setStatusState(StatusState statusState) {
+        if (!(this.statusState.equals(StatusState.CONNECTION_ERROR))) {
+            this.statusState = statusState;
+            statusChangeFlag.setValue(true);
+            statusChangeFlag.setValue(false);
+        } else {
+            System.out.println(this.statusState);
+        }
     }
 }

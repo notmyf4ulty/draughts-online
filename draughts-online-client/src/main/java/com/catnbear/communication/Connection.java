@@ -16,11 +16,9 @@ public class Connection {
     private PrintWriter outWriter;
     private InputStream inputStream;
     private String dataBuffer;
-    private BooleanProperty connectionErrorFlag;
     private BooleanProperty dataReadyFlag;
 
     private Connection() {
-        connectionErrorFlag = new SimpleBooleanProperty(false);
         dataReadyFlag = new SimpleBooleanProperty(false);
     }
 
@@ -85,25 +83,8 @@ public class Connection {
         }
     }
 
-    public void addConnectionErrorListener(ChangeListener<Boolean> booleanChangeListener) {
-        connectionErrorFlag.addListener(booleanChangeListener);
-    }
-
-    public void removeConnectionErrorListener(ChangeListener<Boolean> booleanChangeListener) {
-        connectionErrorFlag.removeListener(booleanChangeListener);
-    }
-
-    private void indicateConnectionError() {
-        connectionErrorFlag.setValue(true);
-        connectionErrorFlag.setValue(false);
-    }
-
     public void addDataReadyListener(ChangeListener<Boolean> booleanChangeListener) {
         dataReadyFlag.addListener(booleanChangeListener);
-    }
-
-    public void removeDataReadyListener(ChangeListener<Boolean> booleanChangeListener) {
-        dataReadyFlag.removeListener(booleanChangeListener);
     }
 
     private void indicateDataReady() {
@@ -128,7 +109,6 @@ public class Connection {
         outWriter = null;
         inputStream = null;
         dataBuffer = null;
-        connectionErrorFlag = null;
         dataReadyFlag = null;
     }
 }

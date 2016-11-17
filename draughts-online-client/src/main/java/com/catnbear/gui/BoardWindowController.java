@@ -42,10 +42,12 @@ public class BoardWindowController {
     private Label communicateLabel;
 
     private GameModel gameModel;
+
     private Board board;
 
-    private Alert alertDialog;
     private CommunicateListener communicateListener;
+
+    private boolean connectionErrorFlag;
 
     @FXML
     private void initialize() {
@@ -97,7 +99,7 @@ public class BoardWindowController {
     private class CommunicateListener implements ChangeListener<Boolean> {
         @Override
         public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-            if (observableValue.getValue() == true) {
+            if (t1) {
                 System.out.println("Status changed: " + gameModel.getGameStatus().getStatusState());
                 Platform.runLater(() -> {
                     switch (gameModel.getGameStatus().getStatusState()) {
@@ -171,8 +173,10 @@ public class BoardWindowController {
 
 
     private void handleConnectionError() {
-        disableGui();
-        showExitMessageDialog("Connection error.");
+        if (!gameModel.isConnectionErrorFlag()) {
+            disableGui();
+            showExitMessageDialog("Connection error.");
+        }
     }
 
     private void handleExit() {
@@ -222,8 +226,8 @@ public class BoardWindowController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.setOnCloseRequest(dialogEvent -> {
-            GuiModifier.changeWindow(mainPane,"/gui/welcomescreen.fxml",this);
             gameModel.resetGameModel();
+            GuiModifier.changeWindow(mainPane,"/gui/welcomescreen.fxml",this);
         });
         alert.showAndWait();
     }

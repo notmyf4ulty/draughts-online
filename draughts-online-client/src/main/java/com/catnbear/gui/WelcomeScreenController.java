@@ -16,7 +16,7 @@ public class WelcomeScreenController {
 
     @FXML
     private void setttingsButtonCallback() {
-
+        GuiModifier.changeWindow(menuPane, "/gui/settings.fxml", this);
     }
 
     @FXML

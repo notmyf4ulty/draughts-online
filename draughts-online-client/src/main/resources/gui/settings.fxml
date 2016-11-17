@@ -6,26 +6,40 @@
 
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
-<StackPane fx:controller="com.catnbear.gui.WelcomeScreenController"
+<?import javafx.scene.layout.HBox?>
+<StackPane fx:controller="com.catnbear.gui.SettingsController"
            xmlns:fx="http://javafx.com/fxml"
-           fx:id="menuPane">
+           fx:id="mainPane">
     <AnchorPane>
         <GridPane AnchorPane.bottomAnchor="5"
                   AnchorPane.topAnchor="5"
                   AnchorPane.leftAnchor="5"
                   AnchorPane.rightAnchor="5"
                   vgap="2">
-            <Label GridPane.rowIndex="0" text="Draughts Online" style="-fx-font-size: 30;"/>
-            <VBox GridPane.rowIndex="1">
-
+            <VBox GridPane.rowIndex="0"
+                  GridPane.fillWidth="true"
+                  maxWidth="Infinity">
+                <Label text="Host name:"/>
+                <HBox>
+                    <TextField fx:id="hostNameTextField" maxWidth="Infinity"/>
+                    <Button onAction="#defaultHostNameButtonCallback" text="Default"/>
+                </HBox>
             </VBox>
-            <TextField GridPane.rowIndex="1" text="" onAction="#playButtonCallback"
-                       GridPane.fillWidth="true"
-                       maxWidth="Infinity"/>
-            <Button GridPane.rowIndex="2" text="Settings" onAction="#setttingsButtonCallback"
+            <VBox GridPane.rowIndex="1"
+                  GridPane.fillWidth="true"
+                  maxWidth="Infinity">
+                <Label text="Port number:"/>
+                <HBox>
+                    <TextField fx:id="portNumberTextField" maxWidth="Infinity"/>
+                    <Button onAction="#defaultPortNumberButtonCallback" text="Default"/>
+                </HBox>
+            </VBox>
+            <Button onAction="#saveButtonCallback" text="Save"
+                    GridPane.rowIndex="2"
                     GridPane.fillWidth="true"
                     maxWidth="Infinity"/>
-            <Button GridPane.rowIndex="3" text="Exit" onAction="#exitButtonCallback"
+            <Button onAction="#exitButtonCallback" text="Exit"
+                    GridPane.rowIndex="3"
                     GridPane.fillWidth="true"
                     maxWidth="Infinity"/>
         </GridPane>

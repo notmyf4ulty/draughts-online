@@ -1,6 +1,7 @@
 package com.catnbear.model.game;
 
 import com.catnbear.communication.Connection;
+import com.catnbear.communication.ConnectionParams;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 
@@ -12,6 +13,7 @@ public class GameModel {
     private Board board;
     private Connection connection;
     private GameStatus gameStatus;
+    private boolean connectionErrorFlag;
 
     private GameModel() {
         gameStatus = new GameStatus();
@@ -40,9 +42,10 @@ public class GameModel {
     }
 
     private boolean establishConnection() {
+        ConnectionParams connectionParams = ConnectionParams.getInstance();
         connection = Connection.getInstance();
         initializeConnectionHandlers();
-        connection.setConnectionParameters("localhost",10001);
+        connection.setConnectionParameters(connectionParams.getHostName(),connectionParams.getPortNumber());
         return connection.connect();
     }
 
@@ -57,8 +60,6 @@ public class GameModel {
         if (receivedData != null) {
             System.out.println("Handling received data: " + receivedData);
             switch (gameStatus.getStatusState()) {
-                case NOT_STARTED:
-                    break;
                 case CONNECTING_TO_SERVER:
                     break;
                 case JOINING_GAME:
@@ -69,14 +70,6 @@ public class GameModel {
                     break;
                 case WAITING_FOR_TURN:
                     newRound(receivedData);
-                    break;
-                case TURN:
-                    break;
-                case LOST:
-                    break;
-                case WON:
-                    break;
-                case CONNECTION_ERROR:
                     break;
             }
         }
@@ -172,9 +165,7 @@ public class GameModel {
     }
 
     private void initializeConnectionHandlers() {
-        connection.addConnectionErrorListener((observableValue, aBoolean, t1) ->
-                gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR));
-        connection.addDataReadyListener((observablshiteValue, aBoolean, t1) -> handleDataReady());
+        connection.addDataReadyListener((observableValue, aBoolean, t1) -> handleDataReady());
     }
 
     private void newRound(String boardString) {
@@ -225,6 +216,16 @@ public class GameModel {
 
     public GameStatus getGameStatus() {
         return gameStatus;
+    }
+
+    public boolean isConnectionErrorFlag() {
+        boolean value = connectionErrorFlag;
+        connectionErrorFlag = true;
+        return value;
+    }
+
+    public void setConnectionErrorFlag(boolean connectionErrorFlag) {
+        this.connectionErrorFlag = connectionErrorFlag;
     }
 
     public void resetGameModel() {

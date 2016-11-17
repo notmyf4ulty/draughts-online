@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <VBox fx:id="mainPane"
       fx:controller="com.catnbear.gui.BoardWindowController"
-      xmlns:fx="http://javafx.com/fxml">
+      xmlns:fx="http://javafx.com/fxml"
+      minWidth="400">
     <HBox>
         <VBox fx:id="boardPane"
               style="-fx-border-color: #DEB887; -fx-border-width: 3; -fx-border-style: solid;">
-            <GridPane fx:id="boardGrid"/>
         </VBox>
         <AnchorPane style="-fx-background-color: #c5925e;">
             <GridPane AnchorPane.bottomAnchor="5"

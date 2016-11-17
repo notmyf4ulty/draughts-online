@@ -36,31 +36,32 @@ import java.io.*;
 public class App {
     public static void main(String[] args) {
 
-        int portNumber = 10001;
-
-        ServerSocket serverSocket = null;
-
         try {
-            serverSocket = new ServerSocket(portNumber);
-        } catch (IOException e) {
-            System.out.println("Cannot create socket.");
-        }
-
-        if (serverSocket != null) {
-            while (true) {
-                try {
-                    Socket clientSocket_1 = serverSocket.accept();
-                    GameThread gameThread_1 = new GameThread(clientSocket_1, portNumber);
-                    gameThread_1.start();
-                    System.out.println("Client 1 connected.");
-                    Socket clientSocket_2 = serverSocket.accept();
-                    GameThread gameThread_2 = new GameThread(clientSocket_2, portNumber);
-                    gameThread_2.start();
-                    System.out.println("Client 2 connected.");
-                } catch (IOException e) {
-                    System.out.println("Connection problem. Reseting game.");
+            int portNumber = Integer.parseInt(args[0]);
+            ServerSocket serverSocket = null;
+            try {
+                serverSocket = new ServerSocket(portNumber);
+            } catch (IOException e) {
+                System.out.println("Cannot create socket.");
+            }
+            if (serverSocket != null) {
+                while (true) {
+                    try {
+                        Socket clientSocket_1 = serverSocket.accept();
+                        GameThread gameThread_1 = new GameThread(clientSocket_1, portNumber);
+                        gameThread_1.start();
+                        System.out.println("Client 1 connected.");
+                        Socket clientSocket_2 = serverSocket.accept();
+                        GameThread gameThread_2 = new GameThread(clientSocket_2, portNumber);
+                        gameThread_2.start();
+                        System.out.println("Client 2 connected.");
+                    } catch (IOException e) {
+                        System.out.println("Connection problem. Reseting game.");
+                    }
                 }
             }
+        } catch (NumberFormatException e) {
+            System.out.println("Inappropriate port number.");
         }
     }
 }
