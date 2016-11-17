@@ -24,7 +24,7 @@
                       GridPane.fillWidth="true"
                       maxWidth="Infinity">
                     <Label text="Your color: "/>
-                    <Label fx:id="activePlayerLabel"/>
+                    <Label fx:id="playerLabel"/>
                 </HBox>
                 <Button fx:id="startGameButton"
                         text="Start game" onAction="#startGameButtonCallback"

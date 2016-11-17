@@ -14,88 +14,137 @@ import javafx.scene.layout.VBox;
 
 public class BoardWindowController {
 
+    /**
+     * Main window's pane.
+     */
     @FXML
     private VBox mainPane;
 
+    /**
+     * Game board's pane.
+     */
     @FXML
     private VBox boardPane;
 
+    /**
+     * Label showing given player's color.
+     */
     @FXML
-    private Label activePlayerLabel;
+    private Label playerLabel;
 
+    /**
+     * Button for starting a game.
+     */
     @FXML
     private Button startGameButton;
 
+    /**
+     * Button for ending a turn.
+     */
     @FXML
     private Button endTurnButton;
 
+    /**
+     * Button for resetting a turn.
+     */
     @FXML
     private Button resetTurnButton;
 
+    /**
+     * Button for surrendering.
+     */
     @FXML
     private Button surrenderButton;
 
+    /**
+     * Button for exiting a game.
+     */
     @FXML
     private Button exitGameButton;
 
+    /**
+     * Label for givin in-game communicates.
+     */
     @FXML
     private Label communicateLabel;
 
+    /**
+     * Game's model instance.
+     */
     private GameModel gameModel;
 
+    /**
+     * Game's board instance.
+     */
     private Board board;
 
-    private CommunicateListener communicateListener;
-
-    private boolean connectionErrorFlag;
-
+    /**
+     * Window's initialization method.
+     */
     @FXML
     private void initialize() {
         gameModel = GameModel.getInstance();
-        activePlayerLabel.textProperty().bind(gameModel.activePlayerLabelTextProperty());
+        playerLabel.textProperty().bind(gameModel.activePlayerLabelTextProperty());
         board = new Board();
         createBoard();
         gameModel.assignBoardModel(board);
-        initialDisableGui();
-        communicateListener = new CommunicateListener();
+        initialDisableButtons();
+        CommunicateListener communicateListener = new CommunicateListener();
         gameModel.getGameStatus().addListener(communicateListener);
     }
 
+    /**
+     * Callback of startGameButton's action.
+     */
     @FXML
     private void startGameButtonCallback() {
-        disableGui();
+        disableAllButtons();
         gameModel.startNewGame();
     }
 
+    /**
+     * Callback of endTurnButton's action.
+     */
     @FXML
     private void endTurnButtonCallback() {
         gameModel.prepareNewRound();
     }
 
+    /**
+     * Callback of resetTurnButton's action.
+     */
     @FXML
     private void resetTurnButtonCallback() {
         gameModel.retreiveBackup();
     }
 
+    /**
+     * Callback of surrenderButton's action.
+     */
     @FXML
     private void surrenderButtonCallback() {
         gameModel.surrender();
     }
 
+    /**
+     * Callback of exitButton's action.
+     */
     @FXML
     private void exitButtonCallback() {
         gameModel.exit();
     }
 
+    /**
+     * Creates a board.
+     */
     private void createBoard() {
         BoardPane boardPane = new BoardPane(board);
         this.boardPane.getChildren().add(boardPane);
     }
 
-    private void gameDeinitialize() {
-        gameModel.getGameStatus().removeListener(communicateListener);
-    }
-
+    /**
+     * Class for tracking changes in game's model. Regarding to the game's status, appropriate action are taken.
+     */
     private class CommunicateListener implements ChangeListener<Boolean> {
         @Override
         public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
@@ -136,54 +185,84 @@ public class BoardWindowController {
         }
     }
 
+    /**
+     * Customizes GUI when the game started.
+     */
     private void initNewGame() {
-        initialDisableGui();
+        initialDisableButtons();
         communicateLabel.setText("Click 'Start Game'");
     }
 
+    /**
+     * Customizes GUI when connected to the server.
+     */
     private void connectToServer() {
-        disableGui();
+        disableAllButtons();
         communicateLabel.setText("Connecting to server...");
     }
 
+    /**
+     * Customizes GUI when waits for a second player.
+     */
     private void waitForSecondPlayer() {
-        waitForSecondPlayerDisableGui();
+        waitForSecondPlayerDisableButtons();
         communicateLabel.setText("Waiting for second player...");
     }
 
+    /**
+     * Customizes GUI when waits for next turn.
+     */
     private void waitForTurn() {
-        waitForTurnDisableGui();
+        waitForTurnDisableButtons();
         communicateLabel.setText("Wait for your turn.");
     }
 
+    /**
+     * Customizes GUI when it's player's turn.
+     */
     private void playerTurn() {
-        turnEnableGui();
+        turnEnableButtons();
         communicateLabel.setText("Your turn");
     }
 
+    /**
+     * Customizes GUI when player lost the game.
+     */
     private void lost() {
-        disableGui();
+        disableAllButtons();
         showExitMessageDialog("You lost");
     }
 
+    /**
+     * Customizes GUI when player won the game.
+     */
     private void won() {
-        disableGui();
+        disableAllButtons();
         showExitMessageDialog("You won");
     }
 
 
+    /**
+     * Customizes GUI when connection error occurred.
+     */
     private void handleConnectionError() {
         if (!gameModel.isConnectionErrorFlag()) {
-            disableGui();
+            disableAllButtons();
             showExitMessageDialog("Connection error.");
         }
     }
 
+    /**
+     * Customizes GUI when exited the game.
+     */
     private void handleExit() {
         showExitMessageDialog("Leaving a game.");
     }
 
-    private void disableGui() {
+    /**
+     * Disables all the buttons.
+     */
+    private void disableAllButtons() {
         startGameButton.setDisable(true);
         endTurnButton.setDisable(true);
         resetTurnButton.setDisable(true);
@@ -191,22 +270,34 @@ public class BoardWindowController {
         exitGameButton.setDisable(true);
     }
 
-    private void initialDisableGui() {
-        disableGui();
+    /**
+     * Disables buttons when game started.
+     */
+    private void initialDisableButtons() {
+        disableAllButtons();
         startGameButton.setDisable(false);
     }
 
-    private void waitForSecondPlayerDisableGui() {
-        disableGui();
+    /**
+     * Disables buttons when waiting for a second player.
+     */
+    private void waitForSecondPlayerDisableButtons() {
+        disableAllButtons();
         exitGameButton.setDisable(false);
     }
 
-    private void waitForTurnDisableGui() {
-        disableGui();
+    /**
+     * Disables buttons when waiting for a turn.
+     */
+    private void waitForTurnDisableButtons() {
+        disableAllButtons();
         surrenderButton.setDisable(false);
     }
 
-    private void enableGui() {
+    /**
+     * Enables all the buttons.
+     */
+    private void enableAllButtons() {
         startGameButton.setDisable(false);
         endTurnButton.setDisable(false);
         resetTurnButton.setDisable(false);
@@ -214,12 +305,19 @@ public class BoardWindowController {
         exitGameButton.setDisable(false);
     }
 
-    private void turnEnableGui() {
-        enableGui();
+    /**
+     * Enables buttons when it's player's turn.
+     */
+    private void turnEnableButtons() {
+        enableAllButtons();
         startGameButton.setDisable(true);
         exitGameButton.setDisable(true);
     }
 
+    /**
+     * Shows a modal message dialog, acknowledging of which finishes the game.
+     * @param message Dialog's message.
+     */
     private void showExitMessageDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Message");
