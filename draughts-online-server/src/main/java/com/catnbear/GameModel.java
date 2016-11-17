@@ -6,7 +6,9 @@ class GameModel {
     volatile private String board;
     private volatile boolean boardAvailable;
     volatile boolean gameFinished;
-    volatile int playerCounter;
+    private volatile int playerCounter;
+    private volatile int playerId;
+    private volatile int lastUpdatePlayerId;
 
     private GameModel() {
     }
@@ -23,6 +25,7 @@ class GameModel {
     }
 
     String getBoard() {
+        boardAvailable = false;
         return board;
     }
 
@@ -30,12 +33,8 @@ class GameModel {
         this.board = board;
     }
 
-    boolean isBoardAvailable() {
-//        if (boardAvailable) {
-//            boardAvailable = false;
-//        }
-//        return true;
-        return boardAvailable;
+    boolean isBoardAvailable(int playerId) {
+        return (lastUpdatePlayerId != playerId) && boardAvailable;
     }
 
     void addPlayer() {
@@ -48,7 +47,12 @@ class GameModel {
         return playerCounter == 2;
     }
 
-    void setBoardAvailable(boolean boardAvailable) {
-        this.boardAvailable = boardAvailable;
+    int getPlayerId() {
+        return playerId++;
+    }
+
+    void setBoardAvailable(int updatePlayerId) {
+        lastUpdatePlayerId = updatePlayerId;
+        boardAvailable = true;
     }
 }

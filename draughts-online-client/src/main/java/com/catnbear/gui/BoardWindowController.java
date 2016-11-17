@@ -90,6 +90,7 @@ public class BoardWindowController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
             if (observableValue.getValue() == true) {
+                System.out.println("Status changed: " + gameModel.getGameStatus().getStatusState());
                 switch (gameModel.getGameStatus().getStatusState()) {
                     case NOT_STARTED:
                         initNewGame();
@@ -136,6 +137,7 @@ public class BoardWindowController {
     }
 
     private void waitForTurn() {
+        System.out.println("Waiting for turn.");
         disableGui();
         communicateLabel.setText("Wait for your turn.");
     }
@@ -166,6 +168,11 @@ public class BoardWindowController {
         resetTurnButton.setDisable(true);
         surrenderButton.setDisable(true);
         startGameButton.setDisable(true);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initialDisableGui() {

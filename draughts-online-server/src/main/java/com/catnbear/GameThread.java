@@ -21,11 +21,13 @@ class GameThread extends Thread {
     private GameModel gameModel;
     private static int threadNumber;
     private String threadName;
+    private int id;
 
     GameThread(Socket playerSocket, int portNumber) {
         this.playerSocket = playerSocket;
         this.portNumber = portNumber;
         gameModel = GameModel.getInstance();
+        this.id = gameModel.getPlayerId();
         threadNumber++;
         threadName = "Thread " + threadNumber;
     }
@@ -60,16 +62,15 @@ class GameThread extends Thread {
                         outputLine = GAME_READY_SERVER_MESSAGE;
                         break;
                     case PLAYER_NEXT_TURN_WAIT_CLIENT_MESSAGE:
-                        while(!gameModel.isBoardAvailable()) {
+                        while(!gameModel.isBoardAvailable(id)) {
                             Thread.sleep(THREAD_SLEEP_TIME);
                         }
                         outputLine = gameModel.getBoard();
-                        gameModel.setBoardAvailable(false);
                         break;
                     default:
                         System.out.println("Setting board: " + inputLine);
                         gameModel.setBoard(inputLine);
-                        gameModel.setBoardAvailable(true);
+                        gameModel.setBoardAvailable(id);
                         break;
                 }
                 if (!outputLine.equals("")) {

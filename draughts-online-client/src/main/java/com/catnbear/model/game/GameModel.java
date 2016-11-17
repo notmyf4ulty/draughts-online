@@ -49,6 +49,7 @@ public class GameModel {
     }
 
     public void prepareNewRound() {
+        gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_TURN);
         if (!moveAvailable) {
             if (!gameStarted) {
                 initializeGame();
@@ -57,6 +58,8 @@ public class GameModel {
             }
             moveAvailable = true;
             backupBoardModel();
+        } else {
+            gameStatus.setStatusState(GameStatus.StatusState.TURN);
         }
     }
 
