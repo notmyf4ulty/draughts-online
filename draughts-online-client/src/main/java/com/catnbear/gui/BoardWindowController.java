@@ -56,7 +56,6 @@ public class BoardWindowController {
         gameModel.getGameStatus().addListener(communicateListener);
     }
 
-
     @FXML
     private void startGameButtonCallback() {
         disableGui();

@@ -15,6 +15,7 @@ class GameThread extends Thread {
     private static final String PLAYER_NEXT_TURN_WAIT_CLIENT_MESSAGE = "turnready";
     private static final String PLAYER_WON_CLIENT_MESSAGE = "won";
     private static final String PLAYER_LOST_SERVER_MESSAGE = "lost";
+    private static final String PLAYER_WON_SERVER_MESSAGE = "won";
     private static final String PLAYER_DISCONNECTION_MESSAGE = "done";
     private static final long THREAD_SLEEP_TIME = 100;
 
@@ -48,47 +49,55 @@ class GameThread extends Thread {
                 inputLine = in.readLine();
                 System.out.println(threadName + " got message: " + inputLine);
                 String outputLine = "";
-                switch (inputLine) {
-                    case JOIN_NEW_PLAYER_CLIENT_MESSAGE:
-                        if (joinCounter % 2 == 0) {
-                            outputLine = PLAYER_WHITE_ASSIGN_SERVER_MESSAGE;
-                        } else {
-                            outputLine = PLAYER_BLACK_ASSIGN_SERVER_MESSAGE;
-                        }
-                        break;
-                    case PLAYER_START_GAME_WAIT_CLIENT_MESSAGE:
-                        gameModel.addPlayer();
-                        while(!gameModel.isGameReady()) {
-                            Thread.sleep(THREAD_SLEEP_TIME);
-                        }
-                        outputLine = GAME_READY_SERVER_MESSAGE;
-                        break;
-                    case PLAYER_NEXT_TURN_WAIT_CLIENT_MESSAGE:
-                        while(!gameModel.isBoardAvailable(id)) {
-                            Thread.sleep(THREAD_SLEEP_TIME);
-                        }
-                        outputLine = gameModel.getBoard();
-                        if (outputLine.equals(PLAYER_LOST_SERVER_MESSAGE)) {
+                if (inputLine != null) {
+                    switch (inputLine) {
+                        case JOIN_NEW_PLAYER_CLIENT_MESSAGE:
+                            if (joinCounter % 2 == 0) {
+                                outputLine = PLAYER_WHITE_ASSIGN_SERVER_MESSAGE;
+                            } else {
+                                outputLine = PLAYER_BLACK_ASSIGN_SERVER_MESSAGE;
+                            }
+                            break;
+                        case PLAYER_START_GAME_WAIT_CLIENT_MESSAGE:
+                            gameModel.addPlayer();
+                            while (!gameModel.isGameReady()) {
+                                Thread.sleep(THREAD_SLEEP_TIME);
+                            }
+                            outputLine = GAME_READY_SERVER_MESSAGE;
+                            break;
+                        case PLAYER_NEXT_TURN_WAIT_CLIENT_MESSAGE:
+                            while (!gameModel.isBoardAvailable(id)) {
+                                Thread.sleep(THREAD_SLEEP_TIME);
+                            }
+                            outputLine = gameModel.getBoard();
+                            if (outputLine.equals(PLAYER_LOST_SERVER_MESSAGE)) {
+                                inputLine = PLAYER_DISCONNECTION_MESSAGE;
+                            }
+                            break;
+                        case PLAYER_WON_CLIENT_MESSAGE:
+                            gameModel.setBoard(PLAYER_LOST_SERVER_MESSAGE);
                             inputLine = PLAYER_DISCONNECTION_MESSAGE;
-                        }
-                        break;
-                    case PLAYER_WON_CLIENT_MESSAGE:
-                        gameModel.setBoard(PLAYER_LOST_SERVER_MESSAGE);
+                            gameModel.setBoardAvailable(id);
+                            break;
+                        default:
+                            System.out.println("Setting board: " + inputLine);
+                            gameModel.setBoard(inputLine);
+                            gameModel.setBoardAvailable(id);
+                            break;
+                    }
+                    if (!outputLine.equals("")) {
+                        System.out.println(threadName + " sending message: " + outputLine);
+                        out.println(outputLine);
+                    }
+                    Thread.sleep(THREAD_SLEEP_TIME);
+                } else {
+                    if (gameModel.areTwoPlayers()) {
+                        gameModel.setBoard(PLAYER_WON_SERVER_MESSAGE);
                         inputLine = PLAYER_DISCONNECTION_MESSAGE;
                         gameModel.setBoardAvailable(id);
-                        break;
-                    default:
-                        System.out.println("Setting board: " + inputLine);
-                        gameModel.setBoard(inputLine);
-                        gameModel.setBoardAvailable(id);
-                        break;
+                    }
                 }
-                if (!outputLine.equals("")) {
-                    System.out.println(threadName + " sending message: " + outputLine);
-                    out.println(outputLine);
-                }
-                Thread.sleep(THREAD_SLEEP_TIME);
-            } while (!inputLine.equals(PLAYER_DISCONNECTION_MESSAGE));
+            } while (inputLine != null && !inputLine.equals(PLAYER_DISCONNECTION_MESSAGE));
         } catch (IOException e) {
             System.out.println("Exception caught when trying to listen on port "
                     + portNumber + " or listening for a connection");

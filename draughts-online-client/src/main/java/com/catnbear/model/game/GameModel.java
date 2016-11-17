@@ -20,6 +20,7 @@ public class GameModel {
 
     public static GameModel getInstance() {
         if(instance == null) {
+            System.out.println("Starting new game.");
             instance = new GameModel();
         }
         return instance;
@@ -178,15 +179,21 @@ public class GameModel {
 
     private void newRound(String boardString) {
         Platform.runLater(() -> {
-            if (!boardString.equals("lost")) {
-                if (board.createBoardFromString(boardString)) {
-                    gameStatus.setStatusState(GameStatus.StatusState.TURN);
-                    moveAvailable = true;
-                } else {
-                    gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
-                }
-            } else {
-                gameStatus.setStatusState(GameStatus.StatusState.LOST);
+            switch (boardString) {
+                case "lost":
+                    gameStatus.setStatusState(GameStatus.StatusState.LOST);
+                    break;
+                case "won":
+                    gameStatus.setStatusState(GameStatus.StatusState.WON);
+                    break;
+                default:
+                    if (board.createBoardFromString(boardString)) {
+                        gameStatus.setStatusState(GameStatus.StatusState.TURN);
+                        moveAvailable = true;
+                    } else {
+                        gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
+                    }
+                    break;
             }
         });
     }
@@ -217,5 +224,11 @@ public class GameModel {
 
     public void resetGameModel() {
         instance = null;
+        player = null;
+        activePlayerLabelText = null;
+        moveAvailable = false;
+        board = null;
+        connection = null;
+        gameStatus = null;
     }
 }

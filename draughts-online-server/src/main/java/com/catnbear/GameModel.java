@@ -50,7 +50,9 @@ class GameModel {
         return playerId++;
     }
 
-
+    public boolean areTwoPlayers() {
+        return playerCounter % 2 == 0;
+    }
 
     void setBoardAvailable(int updatePlayerId) {
         lastUpdatePlayerId = updatePlayerId;
