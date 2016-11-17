@@ -8,6 +8,7 @@ public class GameStatus {
     public enum StatusState {
         NOT_STARTED,
         CONNECTING_TO_SERVER,
+        JOINING_GAME,
         WAITING_FOR_SECOND_PLAYER,
         WAITING_FOR_TURN,
         TURN,

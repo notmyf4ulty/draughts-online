@@ -1,10 +1,8 @@
 package com.catnbear.model.game;
 
 import com.catnbear.communication.Connection;
-import com.catnbear.utilities.GuiModifier;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 public class GameModel {
     private static GameModel instance = null;
@@ -12,7 +10,6 @@ public class GameModel {
     private StringProperty activePlayerLabelText;
     private boolean moveAvailable;
     private Board board;
-    private boolean gameStarted;
     private Connection connection;
     private GameStatus gameStatus;
 
@@ -32,6 +29,15 @@ public class GameModel {
         return player;
     }
 
+    public void startNewGame() {
+        gameStatus.setStatusState(GameStatus.StatusState.CONNECTING_TO_SERVER);
+        if (establishConnection()) {
+            initializeGame();
+        } else {
+            gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
+        }
+    }
+
     private boolean establishConnection() {
         connection = Connection.getInstance();
         initializeConnecionErrorHandler();
@@ -39,81 +45,36 @@ public class GameModel {
         return connection.connect();
     }
 
-    public void startNewGame() {
-        gameStatus.setStatusState(GameStatus.StatusState.CONNECTING_TO_SERVER);
-        if (establishConnection()) {
-            prepareNewRound();
-        } else {
-            gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
-        }
+    private void initializeGame() {
+        joinGame();
     }
 
     public void prepareNewRound() {
-        gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_TURN);
         if (!moveAvailable) {
-            if (!gameStarted) {
-                initializeGame();
-            } else {
-                waitForNextRound();
-            }
-            moveAvailable = true;
+            endTurn();
             backupBoardModel();
         } else {
             gameStatus.setStatusState(GameStatus.StatusState.TURN);
         }
     }
 
-    private void initializeGame() {
-        player = joinGame();
-        if (!player.equals(Player.INCORRECT_PLAYER)) {
-            activePlayerLabelText.setValue(player.toString());
-            gameStarted = true;
-            waitForNextPlayer();
-            if (player.equals(Player.BLACK)) {
-                waitForNextRound();
-            }
-        } else {
-            gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
-        }
+    private void endTurn() {
+        gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_TURN);
+        connection.sendData(board.prepareToSend());
+        connection.sendData("turnready");
+        connection.waitForData();
     }
 
-    private Player joinGame() {
+    private void joinGame() {
+        gameStatus.setStatusState(GameStatus.StatusState.JOINING_GAME);
         connection.sendData("join");
-        String response = connection.waitForData();
-        Player player;
-        switch (response) {
-            case "w":
-                player = Player.WHITE;
-                break;
-            case "b":
-                player = Player.BLACK;
-                break;
-            default:
-                player = Player.INCORRECT_PLAYER;
-                break;
-        }
-        return player;
+        connection.waitForData();
     }
 
     private void waitForNextPlayer() {
         gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_SECOND_PLAYER);
         connection.sendData("startready");
-        String response = connection.waitForData();
-        if (response.equals("gameready")) {
-            gameStatus.setStatusState(GameStatus.StatusState.TURN);
-        } else {
-            gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
-        }
-    }
-
-    private void waitForNextRound() {
-        gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_TURN);
-        connection.sendData(board.prepareToSend());
-        connection.sendData("turnready");
-        String response = connection.waitForData();
-        System.out.println("Got response: " + response);
-        board.createBoardFromString(response);
-        gameStatus.setStatusState(GameStatus.StatusState.TURN);
+        connection.waitForData();
     }
 
     private void backupBoardModel() {
@@ -130,8 +91,99 @@ public class GameModel {
     }
 
     private void initializeConnecionErrorHandler() {
-        connection.addConnectionListener((observableValue, aBoolean, t1) ->
+        connection.addConnectionErrorListener((observableValue, aBoolean, t1) ->
                 gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR));
+        connection.addDataReadyListener((observableValue, aBoolean, t1) -> handleDataReady());
+    }
+
+    private void handleDataReady() {
+        String receivedData = connection.getData();
+        if (receivedData != null) {
+            System.out.println("Handling received data: " + receivedData);
+            switch (gameStatus.getStatusState()) {
+                case NOT_STARTED:
+                    break;
+                case CONNECTING_TO_SERVER:
+                    break;
+                case JOINING_GAME:
+                    gameJoined(receivedData);
+                    break;
+                case WAITING_FOR_SECOND_PLAYER:
+                    secondPlayerReady(receivedData);
+                    break;
+                case WAITING_FOR_TURN:
+                    newRound(receivedData);
+                    break;
+                case TURN:
+                    break;
+                case LOST:
+                    break;
+                case WON:
+                    break;
+                case CONNECTION_ERROR:
+                    break;
+            }
+        }
+    }
+
+
+    private void gameJoined(String playerString) {
+        switch (playerString) {
+            case "w":
+                player = Player.WHITE;
+                break;
+            case "b":
+                player = Player.BLACK;
+                break;
+            default:
+                player = Player.INCORRECT_PLAYER;
+                gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
+                break;
+        }
+        if (!player.equals(Player.INCORRECT_PLAYER)) {
+            Platform.runLater(() -> activePlayerLabelText.setValue(player.toString()));
+            waitForNextPlayer();
+        }
+    }
+
+    private void secondPlayerReady(String gameReadyMessage) {
+        if (gameReadyMessage.equals("gameready")) {
+            startGame();
+        } else {
+            gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
+        }
+    }
+
+    private void startGame() {
+        moveAvailable = true;
+        switch (player) {
+            case WHITE:
+                gameStatus.setStatusState(GameStatus.StatusState.TURN);
+                break;
+            case BLACK:
+                gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_TURN);
+                waitForFirstRound();
+                break;
+            case INCORRECT_PLAYER:
+                gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
+                break;
+        }
+    }
+
+    private void waitForFirstRound() {
+        connection.sendData("turnready");
+        connection.waitForData();
+    }
+
+    private void newRound(String boardString) {
+        Platform.runLater(() -> {
+            if (board.createBoardFromString(boardString)) {
+                gameStatus.setStatusState(GameStatus.StatusState.TURN);
+                moveAvailable = true;
+            } else {
+                gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
+            }
+        });
     }
 
     public void surrender() {

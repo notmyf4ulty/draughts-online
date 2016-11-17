@@ -2,6 +2,7 @@ package com.catnbear.gui;
 
 import com.catnbear.model.game.Board;
 import com.catnbear.model.game.GameModel;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -91,32 +92,34 @@ public class BoardWindowController {
         public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
             if (observableValue.getValue() == true) {
                 System.out.println("Status changed: " + gameModel.getGameStatus().getStatusState());
-                switch (gameModel.getGameStatus().getStatusState()) {
-                    case NOT_STARTED:
-                        initNewGame();
-                        break;
-                    case CONNECTING_TO_SERVER:
-                        connectToServer();
-                        break;
-                    case WAITING_FOR_SECOND_PLAYER:
-                        waitForSecondPlayer();
-                        break;
-                    case WAITING_FOR_TURN:
-                        waitForTurn();
-                        break;
-                    case TURN:
-                        playerTurn();
-                        break;
-                    case LOST:
-                        lost();
-                        break;
-                    case WON:
-                        won();
-                        break;
-                    case CONNECTION_ERROR:
-                        handleConnectionError();
-                        break;
-                }
+                Platform.runLater(() -> {
+                    switch (gameModel.getGameStatus().getStatusState()) {
+                        case NOT_STARTED:
+                            initNewGame();
+                            break;
+                        case CONNECTING_TO_SERVER:
+                            connectToServer();
+                            break;
+                        case WAITING_FOR_SECOND_PLAYER:
+                            waitForSecondPlayer();
+                            break;
+                        case WAITING_FOR_TURN:
+                            waitForTurn();
+                            break;
+                        case TURN:
+                            playerTurn();
+                            break;
+                        case LOST:
+                            lost();
+                            break;
+                        case WON:
+                            won();
+                            break;
+                        case CONNECTION_ERROR:
+                            handleConnectionError();
+                            break;
+                    }
+                });
             }
         }
     }

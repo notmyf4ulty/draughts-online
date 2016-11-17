@@ -3,6 +3,7 @@ package com.catnbear.communication;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,11 +17,14 @@ public class Connection {
     private Socket serverSocket;
     private PrintWriter outWriter;
     private InputStream inputStream;
+    private String dataBuffer;
     private BooleanProperty connectionErrorFlag;
+    private BooleanProperty dataReadyFlag;
 
 
     private Connection() {
         connectionErrorFlag = new SimpleBooleanProperty(false);
+        dataReadyFlag = new SimpleBooleanProperty(false);
     }
 
     public static Connection getInstance() {
@@ -36,30 +40,9 @@ public class Connection {
         return true;
     }
 
-    public String waitForData() {
-        System.out.print("Waiting for data...");
-        String response = "err";
-        try {
-            long waitStartTime = System.currentTimeMillis();
-            do {
-                if (inputStream.available() != 0) {
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    System.out.print(" Data ready: ");
-                    response = bufferedReader.readLine();
-                    System.out.println(response);
-                }
-                Thread.sleep(1000);
-            } while (response.equals("err"));// && isTimeout(waitStartTime));
-        } catch (IOException exception) {
-            exception.printStackTrace();
-            return response;
-        } catch (InterruptedException exception) {
-            exception.printStackTrace();
-            return response;
-        }
-        System.out.println(response);
-        return response;
+    public void waitForData() {
+        DataReceiver dataReceiver = new DataReceiver();
+        new Thread(dataReceiver).start();
     }
 
     public void setConnectionParameters(String hostName, int portNumber) {
@@ -83,11 +66,65 @@ public class Connection {
         return System.currentTimeMillis() - startTime < WAIT_FOR_DATA_TIMEOUT;
     }
 
-    public void addConnectionListener(ChangeListener<Boolean> booleanChangeListener) {
+    private class DataReceiver extends Task<Void> {
+        @Override
+        protected Void call() throws Exception {
+            System.out.print("Waiting for data...");
+            dataBuffer = null;
+            try {
+                long waitStartTime = System.currentTimeMillis();
+                do {
+                    if (inputStream.available() != 0) {
+                        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                        System.out.print(" Data ready: ");
+                        dataBuffer = bufferedReader.readLine();
+                        indicateDataReady();
+                        System.out.println(dataBuffer);
+                    }
+                    Thread.sleep(500);
+                } while (dataBuffer == null);// && isTimeout(waitStartTime));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public void addConnectionErrorListener(ChangeListener<Boolean> booleanChangeListener) {
         connectionErrorFlag.addListener(booleanChangeListener);
     }
 
-    public void removeConnectionListener(ChangeListener<Boolean> booleanChangeListener) {
+    public void removeConnectionErrorListener(ChangeListener<Boolean> booleanChangeListener) {
         connectionErrorFlag.removeListener(booleanChangeListener);
+    }
+
+    private void indicateConnectionError() {
+        connectionErrorFlag.setValue(true);
+        connectionErrorFlag.setValue(false);
+    }
+
+    public void addDataReadyListener(ChangeListener<Boolean> booleanChangeListener) {
+        dataReadyFlag.addListener(booleanChangeListener);
+    }
+
+    public void removeDataReadyListener(ChangeListener<Boolean> booleanChangeListener) {
+        dataReadyFlag.removeListener(booleanChangeListener);
+    }
+
+    private void indicateDataReady() {
+        if (dataBuffer != null) {
+            System.out.println("Got shit: " + dataBuffer);
+            dataReadyFlag.setValue(true);
+            dataReadyFlag.setValue(false);
+        }
+    }
+
+    public String getData() {
+        String result = dataBuffer;
+        dataBuffer = null;
+        return result;
     }
 }

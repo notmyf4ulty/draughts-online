@@ -258,29 +258,35 @@ public class Board extends Observable {
         return boardString;
     }
 
-    public void createBoardFromString(String boardString) {
-        System.out.println("Creating board from String: " + boardString);
-        String [] boardColumns = boardString.split(";");
-        Field [][] newBoard = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
-        for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
-            for (int j = 0 ; j < BOARD_DIMENSION ; j++) {
-                Field field = new Field(new Position(i,j));
-                switch (boardColumns[i].charAt(j)) {
-                    case 'w':
-                        Piece whitePiece = new Piece(Piece.PieceType.MEN,Player.WHITE);
-                        field.setPiece(whitePiece);
-                        break;
-                    case 'b':
-                        Piece blackPiece = new Piece(Piece.PieceType.MEN,Player.BLACK);
-                        field.setPiece(blackPiece);
-                        break;
+    public boolean createBoardFromString(String boardString) {
+        try {
+            System.out.println("Creating board from String: " + boardString);
+            String[] boardColumns = boardString.split(";");
+            Field[][] newBoard = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
+            for (int i = 0; i < BOARD_DIMENSION; i++) {
+                for (int j = 0; j < BOARD_DIMENSION; j++) {
+                    Field field = new Field(new Position(i, j));
+                    switch (boardColumns[i].charAt(j)) {
+                        case 'w':
+                            Piece whitePiece = new Piece(Piece.PieceType.MEN, Player.WHITE);
+                            field.setPiece(whitePiece);
+                            break;
+                        case 'b':
+                            Piece blackPiece = new Piece(Piece.PieceType.MEN, Player.BLACK);
+                            field.setPiece(blackPiece);
+                            break;
+                    }
+                    newBoard[i][j] = field;
                 }
-                newBoard[i][j] = field;
             }
+            boardBackup = getCopy(newBoard);
+            retrieveBackup();
+            System.out.println("New board is: " + prepareToSend());
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        boardBackup = getCopy(newBoard);
-        retrieveBackup();
-        System.out.println("New board is: " + prepareToSend());
     }
 
     public Field[][] getBoard() {
