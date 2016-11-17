@@ -5,7 +5,6 @@ class GameModel {
     volatile private int joinCounter;
     volatile private String board;
     private volatile boolean boardAvailable;
-    volatile boolean gameFinished;
     private volatile int playerCounter;
     private volatile int playerId;
     private volatile int lastUpdatePlayerId;

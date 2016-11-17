@@ -32,7 +32,7 @@ public class GameModel {
     public void startNewGame() {
         gameStatus.setStatusState(GameStatus.StatusState.CONNECTING_TO_SERVER);
         if (establishConnection()) {
-            initializeGame();
+            joinGame();
         } else {
             gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
         }
@@ -40,60 +40,21 @@ public class GameModel {
 
     private boolean establishConnection() {
         connection = Connection.getInstance();
-        initializeConnecionErrorHandler();
+        initializeConnectionHandlers();
         connection.setConnectionParameters("localhost",10001);
         return connection.connect();
     }
 
-    private void initializeGame() {
-        joinGame();
-    }
-
-    public void prepareNewRound() {
-        if (!moveAvailable) {
-            endTurn();
-            backupBoardModel();
-        } else {
-            gameStatus.setStatusState(GameStatus.StatusState.TURN);
-        }
-    }
-
-    private void endTurn() {
-        gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_TURN);
-        connection.sendData(board.prepareToSend());
-        connection.sendData("turnready");
-        connection.waitForData();
+    private void initializeConnectionHandlers() {
+        connection.addConnectionErrorListener((observableValue, aBoolean, t1) ->
+                gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR));
+        connection.addDataReadyListener((observableValue, aBoolean, t1) -> handleDataReady());
     }
 
     private void joinGame() {
         gameStatus.setStatusState(GameStatus.StatusState.JOINING_GAME);
         connection.sendData("join");
         connection.waitForData();
-    }
-
-    private void waitForNextPlayer() {
-        gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_SECOND_PLAYER);
-        connection.sendData("startready");
-        connection.waitForData();
-    }
-
-    private void backupBoardModel() {
-        if (board != null) {
-            board.backupBoard();
-        }
-    }
-
-    public void retreiveBackup() {
-        if (board != null) {
-            board.retrieveBackup();
-        }
-        moveAvailable = true;
-    }
-
-    private void initializeConnecionErrorHandler() {
-        connection.addConnectionErrorListener((observableValue, aBoolean, t1) ->
-                gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR));
-        connection.addDataReadyListener((observableValue, aBoolean, t1) -> handleDataReady());
     }
 
     private void handleDataReady() {
@@ -126,7 +87,6 @@ public class GameModel {
         }
     }
 
-
     private void gameJoined(String playerString) {
         switch (playerString) {
             case "w":
@@ -144,6 +104,12 @@ public class GameModel {
             Platform.runLater(() -> activePlayerLabelText.setValue(player.toString()));
             waitForNextPlayer();
         }
+    }
+
+    private void waitForNextPlayer() {
+        gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_SECOND_PLAYER);
+        connection.sendData("startready");
+        connection.waitForData();
     }
 
     private void secondPlayerReady(String gameReadyMessage) {
@@ -186,6 +152,13 @@ public class GameModel {
         });
     }
 
+    public void retreiveBackup() {
+        if (board != null) {
+            board.retrieveBackup();
+        }
+        moveAvailable = true;
+    }
+
     public void surrender() {
 
     }
@@ -194,11 +167,11 @@ public class GameModel {
         this.board = board;
     }
 
-    public boolean isMoveAvailable() {
+    boolean isMoveAvailable() {
         return moveAvailable;
     }
 
-    public void setMoveAvailable(boolean moveAvailable) {
+    void setMoveAvailable(boolean moveAvailable) {
         this.moveAvailable = moveAvailable;
     }
 
