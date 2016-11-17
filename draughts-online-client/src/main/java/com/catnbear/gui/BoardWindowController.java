@@ -88,8 +88,8 @@ public class BoardWindowController {
     }
 
     private void createBoard() {
-        BoardView boardView = new BoardView(board);
-        boardPane.getChildren().add(boardView);
+        BoardPane boardPane = new BoardPane(board);
+        this.boardPane.getChildren().add(boardPane);
     }
 
     private void gameDeinitialize() {

@@ -3,9 +3,9 @@ package com.catnbear.gui;
 import com.catnbear.model.game.Position;
 import javafx.scene.layout.StackPane;
 
-class FieldView extends StackPane {
+class FieldPane extends StackPane {
 
-    FieldView() {
+    FieldPane() {
         super();
     }
 
@@ -19,8 +19,8 @@ class FieldView extends StackPane {
         }
     }
 
-    void putPieceView(PieceView pieceView) {
+    void putPieceView(PieceShape pieceShape) {
         getChildren().clear();
-        getChildren().add(pieceView);
+        getChildren().add(pieceShape);
     }
 }
