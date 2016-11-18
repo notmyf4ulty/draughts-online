@@ -78,17 +78,17 @@ class GameThread extends Thread {
                         case PLAYER_WON_CLIENT_MESSAGE:
                             gameModel.setBoard(PLAYER_LOST_SERVER_MESSAGE);
                             inputLine = PLAYER_DISCONNECTION_MESSAGE;
-                            gameModel.setBoardAvailable(id);
+                            gameModel.setBoardAvailableFlag(id);
                             break;
                         case PLAYER_LOST_CLIENT_MESSAGE:
                             gameModel.setBoard(PLAYER_WON_SERVER_MESSAGE);
                             inputLine = PLAYER_DISCONNECTION_MESSAGE;
-                            gameModel.setBoardAvailable(id);
+                            gameModel.setBoardAvailableFlag(id);
                             break;
                         default:
                             System.out.println("Setting board: " + inputLine);
                             gameModel.setBoard(inputLine);
-                            gameModel.setBoardAvailable(id);
+                            gameModel.setBoardAvailableFlag(id);
                             break;
                     }
                     if (!outputLine.equals("")) {
@@ -100,7 +100,7 @@ class GameThread extends Thread {
                     if (gameModel.areTwoPlayers()) {
                         gameModel.setBoard(PLAYER_WON_SERVER_MESSAGE);
                         inputLine = PLAYER_DISCONNECTION_MESSAGE;
-                        gameModel.setBoardAvailable(id);
+                        gameModel.setBoardAvailableFlag(id);
                     }
                 }
             } while (inputLine != null && !inputLine.equals(PLAYER_DISCONNECTION_MESSAGE));
