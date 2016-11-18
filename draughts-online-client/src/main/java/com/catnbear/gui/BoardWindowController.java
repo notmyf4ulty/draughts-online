@@ -84,7 +84,7 @@ public class BoardWindowController {
     @FXML
     private void initialize() {
         gameModel = GameModel.getInstance();
-        playerLabel.textProperty().bind(gameModel.activePlayerLabelTextProperty());
+        playerLabel.textProperty().bind(gameModel.playerLabelTextProperty());
         board = new Board();
         createBoard();
         gameModel.assignBoardModel(board);
@@ -115,7 +115,7 @@ public class BoardWindowController {
      */
     @FXML
     private void resetTurnButtonCallback() {
-        gameModel.retreiveBackup();
+        gameModel.retrieveBackup();
     }
 
     /**

@@ -6,20 +6,58 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 
 public class GameModel {
+    /**
+     * Singleton's instance.
+     */
     private static GameModel instance = null;
+
+    /**
+     * Chosen player (white/black).
+     */
     private Player player;
-    private StringProperty activePlayerLabelText;
-    private boolean moveAvailable;
+
+    /**
+     * String property containing a player.
+     */
+    private StringProperty playerLabelText;
+
+    /**
+     * Flag indicating if there is a move available.
+     */
+    private boolean moveAvailableFlag;
+
+    /**
+     * Board's instance.
+     */
     private Board board;
+
+    /**
+     * Servers connection.
+     */
     private Connection connection;
+
+    /**
+     * Status of a game.
+     */
     private GameStatus gameStatus;
+
+    /**
+     * Flag indicating if there was an connection error.
+     */
     private boolean connectionErrorFlag;
 
+    /**
+     * Default constructor. It's private because of the Singleton design pattern's purposes.
+     */
     private GameModel() {
         gameStatus = new GameStatus();
-        activePlayerLabelText = new SimpleStringProperty("");
+        playerLabelText = new SimpleStringProperty("");
     }
 
+    /**
+     * Getter of the Singleton's instance.
+     * @return Class' instance.
+     */
     public static GameModel getInstance() {
         if(instance == null) {
             System.out.println("Starting new game.");
@@ -28,10 +66,17 @@ public class GameModel {
         return instance;
     }
 
+    /**
+     * Getter of chosen player.
+     * @return A player.
+     */
     Player getPlayer() {
         return player;
     }
 
+    /**
+     * Actions taken after the new game's start.
+     */
     public void startNewGame() {
         gameStatus.setStatusState(GameStatus.StatusState.CONNECTING_TO_SERVER);
         if (establishConnection()) {
@@ -41,6 +86,10 @@ public class GameModel {
         }
     }
 
+    /**
+     * Establishes a connection with a server.
+     * @return True if connection was established. False otherwise.
+     */
     private boolean establishConnection() {
         ConnectionParameters connectionParameters = ConnectionParameters.getInstance();
         connection = Connection.getInstance();
@@ -49,12 +98,18 @@ public class GameModel {
         return connection.connect();
     }
 
+    /**
+     * Joins a game.
+     */
     private void joinGame() {
         gameStatus.setStatusState(GameStatus.StatusState.JOINING_GAME);
         connection.sendData("join");
         connection.waitForData();
     }
 
+    /**
+     * Handler for a available data.
+     */
     private void handleDataReady() {
         String receivedData = connection.getData();
         if (receivedData != null) {
@@ -75,6 +130,10 @@ public class GameModel {
         }
     }
 
+    /**
+     * Action taken after joining a game.
+     * @param playerString String with player choice given by a server.
+     */
     private void gameJoined(String playerString) {
         switch (playerString) {
             case "w":
@@ -89,17 +148,24 @@ public class GameModel {
                 break;
         }
         if (!player.equals(Player.INCORRECT_PLAYER)) {
-            Platform.runLater(() -> activePlayerLabelText.setValue(player.toString()));
+            Platform.runLater(() -> playerLabelText.setValue(player.toString()));
             waitForNextPlayer();
         }
     }
 
+    /**
+     * Action taken when waiting for a next player.
+     */
     private void waitForNextPlayer() {
         gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_SECOND_PLAYER);
         connection.sendData("startready");
         connection.waitForData();
     }
 
+    /**
+     * Action taken after a second player is ready.
+     * @param gameReadyMessage Message indicating that the game is ready.
+     */
     private void secondPlayerReady(String gameReadyMessage) {
         if (gameReadyMessage.equals("gameready")) {
             startGame();
@@ -108,8 +174,11 @@ public class GameModel {
         }
     }
 
+    /**
+     * Starts a game.
+     */
     private void startGame() {
-        moveAvailable = true;
+        moveAvailableFlag = true;
         switch (player) {
             case WHITE:
                 gameStatus.setStatusState(GameStatus.StatusState.TURN);
@@ -124,13 +193,19 @@ public class GameModel {
         }
     }
 
+    /**
+     * Waits for a first round.
+     */
     private void waitForFirstRound() {
         connection.sendData("turnready");
         connection.waitForData();
     }
 
+    /**
+     * Prepares a new round.
+     */
     public void prepareNewRound() {
-        if (!moveAvailable) {
+        if (!moveAvailableFlag) {
             backupBoardModel();
             endTurn();
         } else {
@@ -138,8 +213,11 @@ public class GameModel {
         }
     }
 
+    /**
+     * Action taken after the end of a turn.
+     */
     private void endTurn() {
-        int enemyPiecesNumber = board.countPieces();
+        int enemyPiecesNumber = board.countEnemyPieces();
         if (enemyPiecesNumber != 0) {
             gameStatus.setStatusState(GameStatus.StatusState.WAITING_FOR_TURN);
             connection.sendData(board.prepareToSend());
@@ -151,23 +229,36 @@ public class GameModel {
         }
     }
 
+    /**
+     * Backups board's model.
+     */
     private void backupBoardModel() {
         if (board != null) {
             board.backupBoard();
         }
     }
 
-    public void retreiveBackup() {
+    /**
+     * Retrieves a board's backup.
+     */
+    public void retrieveBackup() {
         if (board != null) {
             board.retrieveBackup();
         }
-        moveAvailable = true;
+        moveAvailableFlag = true;
     }
 
+    /**
+     * Initializes connection handlers. Currently there is only one handler.
+     */
     private void initializeConnectionHandlers() {
         connection.addDataReadyListener((observableValue, aBoolean, t1) -> handleDataReady());
     }
 
+    /**
+     * Action taken after the new round started.
+     * @param boardString Board's string representation.
+     */
     private void newRound(String boardString) {
         Platform.runLater(() -> {
             switch (boardString) {
@@ -180,7 +271,7 @@ public class GameModel {
                 default:
                     if (board.createBoardFromString(boardString)) {
                         gameStatus.setStatusState(GameStatus.StatusState.TURN);
-                        moveAvailable = true;
+                        moveAvailableFlag = true;
                     } else {
                         gameStatus.setStatusState(GameStatus.StatusState.CONNECTION_ERROR);
                     }
@@ -189,50 +280,79 @@ public class GameModel {
         });
     }
 
+    /**
+     * Action taken after the player's surrender.
+     */
     public void surrender() {
         gameStatus.setStatusState(GameStatus.StatusState.LOST);
         connection.sendData("lost");
     }
 
+    /**
+     * Action taken after the game's exit.
+     */
     public void exit() {
         gameStatus.setStatusState(GameStatus.StatusState.EXIT);
     }
 
+    /**
+     * Assigns a board's model.
+     * @param board Board's model.
+     */
     public void assignBoardModel(Board board) {
         this.board = board;
     }
 
-    public boolean isMoveAvailable() {
-        return moveAvailable;
+    /**
+     * Getter of moveAvailableFlag.
+     * @return A moveAvailableFlag.
+     */
+    boolean isMoveAvailableFlag() {
+        return moveAvailableFlag;
     }
 
-    public void setMoveAvailable(boolean moveAvailable) {
-        this.moveAvailable = moveAvailable;
+    /**
+     * Setter of moveAvailableFlag.
+     * @param moveAvailableFlag New moveAvailableFlag.
+     */
+    void setMoveAvailableFlag(boolean moveAvailableFlag) {
+        this.moveAvailableFlag = moveAvailableFlag;
     }
 
-    public StringProperty activePlayerLabelTextProperty() {
-        return activePlayerLabelText;
+    /**
+     * Getter of playerLabelTextProperty.
+     * @return a playerLabelTextProperty.
+     */
+    public StringProperty playerLabelTextProperty() {
+        return playerLabelText;
     }
 
+    /**
+     * Getter of gameStatus.
+     * @return A game's status.
+     */
     public GameStatus getGameStatus() {
         return gameStatus;
     }
 
+    /**
+     * Getter of connectionErrorFlag.
+     * @return A connectionErrorFlag.
+     */
     public boolean isConnectionErrorFlag() {
         boolean value = connectionErrorFlag;
         connectionErrorFlag = true;
         return value;
     }
 
-    public void setConnectionErrorFlag(boolean connectionErrorFlag) {
-        this.connectionErrorFlag = connectionErrorFlag;
-    }
-
+    /**
+     * Fully resets a game's model.
+     */
     public void resetGameModel() {
         instance = null;
         player = null;
-        activePlayerLabelText = null;
-        moveAvailable = false;
+        playerLabelText = null;
+        moveAvailableFlag = false;
         board = null;
         connection.resetConnection();
         gameStatus = null;

@@ -2,22 +2,54 @@ package com.catnbear.model.game;
 
 import java.util.*;
 
+/**
+ * Logical game board's model. Extends Observable class, thus its changes can update the behavior of the Observers.
+ */
 public class Board extends Observable {
+    /**
+     * Board's dimension.
+     */
     private static final int BOARD_DIMENSION = 5;
-    private Field [][] board;
-    private Field [][] boardBackup;
-    private GameModel gameModel;
-    private boolean multiBeatMode;
-    private Field multiBeatingPieceField;
-    private int enemyPiecesNumber;
 
+    /**
+     * Actual board. An 2D array containing Field objects.
+     */
+    private Field [][] board;
+
+    /**
+     * Backup board.
+     */
+    private Field [][] boardBackup;
+
+    /**
+     * Game's model.
+     */
+    private GameModel gameModel;
+
+    /**
+     * Flag indicating multi - beating mode.
+     */
+    private boolean multiBeatModeFlag;
+
+    /**
+     * Actual field containing piece which can beat next piece.
+     */
+    private Field multiBeatingPieceField;
+
+    /**
+     * Class' constructor.
+     */
     public Board() {
         board = generateBoard();
         backupBoard();
         gameModel = GameModel.getInstance();
-        multiBeatMode = false;
+        multiBeatModeFlag = false;
     }
 
+    /**
+     * Generates board.
+     * @return Generated board.
+     */
     private Field [][] generateBoard() {
         Field [][] board = new Field [BOARD_DIMENSION][BOARD_DIMENSION];
         for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
@@ -30,6 +62,11 @@ public class Board extends Observable {
         return board;
     }
 
+    /**
+     * Sets initial field's configuration.
+     * @param position Field's position.
+     * @return Initially configured field.
+     */
     private Field setInitialConfiguration(Position position) {
         Field field = new Field(position);
         if (position.isXySumEven()) {
@@ -46,11 +83,15 @@ public class Board extends Observable {
         return field;
     }
 
+    /**
+     * Chooses a field of a piece which will be intendet to move.
+     * @param position Field's position.
+     */
     public void chooseField(Position position) {
         Field chosenField = board[position.getX()][position.getY()];
-        if (gameModel.isMoveAvailable()) {
+        if (gameModel.isMoveAvailableFlag()) {
             Field activePieceField;
-            if (multiBeatMode) {
+            if (multiBeatModeFlag) {
                 activePieceField = multiBeatingPieceField;
             } else {
                 activePieceField = getFieldOfActivePiece();
@@ -60,7 +101,7 @@ public class Board extends Observable {
                 moveActivePiece(activePieceField, chosenField);
             }
             if (chosenField.containsPiece()) {
-                if (!multiBeatMode) {
+                if (!multiBeatModeFlag) {
                     selectPiece(chosenField);
                 }
             }
@@ -69,6 +110,10 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Gets field of actively selected piece.
+     * @return Field if there is an active one. Null if there is no such Field.
+     */
     private Field getFieldOfActivePiece() {
         for(Field [] fields : board) {
             for (Field field : fields) {
@@ -80,12 +125,17 @@ public class Board extends Observable {
         return null;
     }
 
+    /**
+     * Moves actively selected piece.
+     * @param fromField Start field.
+     * @param toField Stop field.
+     */
     private void moveActivePiece(Field fromField, Field toField) {
         if (!toField.containsPiece() &&
                 isProperDirection(fromField.getPosition(),toField.getPosition())) {
             switch (Position.getMoveDistance(fromField.getPosition(),toField.getPosition())) {
                 case ONE_FIELD_DISTANCE:
-                    if (!multiBeatMode) {
+                    if (!multiBeatModeFlag) {
                         movePiece(fromField, toField);
                     }
                     break;
@@ -96,11 +146,17 @@ public class Board extends Observable {
                     break;
             }
         }
-        if (!multiBeatMode) {
+        if (!multiBeatModeFlag) {
             resetSelection();
         }
     }
 
+    /**
+     * Checks if piece is moved in a proper direction.
+     * @param fromPosition Start position.
+     * @param toPosition Stop position.
+     * @return True if direction is proper. False otherwise.
+     */
     private boolean isProperDirection(Position fromPosition, Position toPosition) {
         if(Position.getMoveDistance(fromPosition,toPosition).equals(MoveDistance.ONE_FIELD_DISTANCE)) {
             int yFrom = fromPosition.getY();
@@ -117,13 +173,23 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Moves piece.
+     * @param fromField Start field.
+     * @param toField Stop field.
+     */
     private void movePiece(Field fromField, Field toField) {
         Piece piece = fromField.getPiece();
         fromField.resetPiece();
         toField.setPiece(piece);
-        gameModel.setMoveAvailable(false);
+        gameModel.setMoveAvailableFlag(false);
     }
 
+    /**
+     * Moves Piece by two fields - possible only when beating enemy's piece.
+     * @param fromField Start field.
+     * @param toField Stop field.
+     */
     private void movePieceByTwoFields(Field fromField, Field toField) {
         Player activePlayer = gameModel.getPlayer();
         int x = (toField.getPosition().getX() + fromField.getPosition().getX()) / 2;
@@ -133,16 +199,20 @@ public class Board extends Observable {
                 !enemyField.getPiece().getPlayer().equals(activePlayer)) {
             enemyField.resetPiece();
             movePiece(fromField,toField);
-            multiBeatMode = isOpponentToBeatAround(toField);
-            if (multiBeatMode) {
-                gameModel.setMoveAvailable(true);
+            multiBeatModeFlag = isOpponentToBeatAround(toField);
+            if (multiBeatModeFlag) {
+                gameModel.setMoveAvailableFlag(true);
             }
         }
     }
 
+    /**
+     * Checks if there is an opponent to beat.
+     * @param field Actual field.
+     * @return True if there is an opponent to beat. False otherwise.
+     */
     private boolean isOpponentToBeatAround(Field field) {
-        Field [] opponentFields = getNeighbouringOpponents(field);
-        if (isPlaceBehindOpponents(field, opponentFields)) {
+        if (isPlaceBehindOpponents(field)) {
             multiBeatingPieceField = field;
             return true;
         } else {
@@ -151,27 +221,16 @@ public class Board extends Observable {
         return false;
     }
 
-    private Field [] getNeighbouringOpponents(Field field) {
-        ArrayList<Field> opponentFields = new ArrayList<>();
-        Position [] neighbouringPositions = field.getPosition().getDiagonalNeighboursPositions(1,BOARD_DIMENSION);
-        for (Position position : neighbouringPositions) {
-            Field opponentField = board[position.getX()][position.getY()];
-            if (opponentField.containsPiece() &&
-                    !opponentField
-                            .getPiece()
-                            .getPlayer()
-                            .equals(gameModel.getPlayer())) {
-                opponentFields.add(opponentField);
-            }
-        }
-
-        Field [] opponentFieldsArray = new Field[opponentFields.size()];
-        opponentFieldsArray = opponentFields.toArray(opponentFieldsArray);
-        return opponentFieldsArray;
-    }
-
-    private boolean isPlaceBehindOpponents(Field attackingField, Field [] opponents) {
-        Position [] neighbouringPositions = attackingField.getPosition().getDiagonalNeighboursPositions(2,BOARD_DIMENSION);
+    /**
+     * Checks if there is a place behind a start field and an opponent's field.
+     * @param attackingField Field to go.
+     * @return True if there is a place. False otherwise.
+     */
+    private boolean isPlaceBehindOpponents(Field attackingField) {
+        Position [] neighbouringPositions =
+                attackingField
+                .getPosition()
+                .getDiagonalNeighboursPositions(2,BOARD_DIMENSION);
         for (Position position : neighbouringPositions) {
             Field behindOpponentField = board[position.getX()][position.getY()];
             if (!behindOpponentField.containsPiece() &&
@@ -185,6 +244,12 @@ public class Board extends Observable {
         return false;
     }
 
+    /**
+     * Checks if there is an opponent in the middle of the actual piece position and to-go position.
+     * @param fromPosition Start position.
+     * @param toPosition Stop position.
+     * @return True if there is an opponent. False otherwise.
+     */
     private boolean isOpponentInTheMiddle(Position fromPosition, Position toPosition) {
         int opponentX = (fromPosition.getX() + toPosition.getX()) / 2;
         int opponentY = (fromPosition.getY() + toPosition.getY()) / 2;
@@ -197,6 +262,10 @@ public class Board extends Observable {
         return false;
     }
 
+    /**
+     * Selects a piece of a given field.
+     * @param field Field containing a piece.
+     */
     private void selectPiece(Field field) {
         resetSelection();
         Player activePlayer = gameModel.getPlayer();
@@ -205,6 +274,9 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Resets current selection.
+     */
     private void resetSelection() {
         for (Field[] fields : board) {
             for (Field field : fields) {
@@ -215,6 +287,11 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Gets a copy of a given board's array.
+     * @param fromBoard Board to be copied.
+     * @return Copy of the given board.
+     */
     private Field[][] getCopy(Field[][] fromBoard) {
         Field [][] copyBoard = new Field[BOARD_DIMENSION][BOARD_DIMENSION];
         for (int i = 0 ; i < BOARD_DIMENSION ; i++) {
@@ -225,19 +302,28 @@ public class Board extends Observable {
         return copyBoard;
     }
 
+    /**
+     * Creates board's backup.
+     */
     void backupBoard() {
         boardBackup = getCopy(board);
     }
 
+    /**
+     * Retrieves backup.
+     */
     void retrieveBackup() {
         board = getCopy(boardBackup);
-        multiBeatMode = false;
+        multiBeatModeFlag = false;
         multiBeatingPieceField = null;
-        enemyPiecesNumber = countPieces();
         setChanged();
         notifyObservers();
     }
 
+    /**
+     * Prepares a board to send.
+     * @return String form af a board which will be send to the server.
+     */
     String prepareToSend() {
         String boardString = "";
         for (Field [] fields : board) {
@@ -260,6 +346,11 @@ public class Board extends Observable {
         return boardString;
     }
 
+    /**
+     * Creates a board from a message.
+     * @param boardString String board's representation.
+     * @return True if creation process was finished with success. False otherwise.
+     */
     boolean createBoardFromString(String boardString) {
         try {
             System.out.println("Creating board from String: " + boardString);
@@ -291,7 +382,11 @@ public class Board extends Observable {
         }
     }
 
-    public int countPieces() {
+    /**
+     * Counts enemy pieces on a board.
+     * @return Number of enemy pieces.
+     */
+    int countEnemyPieces() {
         int counter = 0;
         for (int i = 0; i < BOARD_DIMENSION; i++) {
             for (int j = 0; j < BOARD_DIMENSION; j++) {
@@ -305,6 +400,10 @@ public class Board extends Observable {
         return counter;
     }
 
+    /**
+     * Getter of a board.
+     * @return A board.
+     */
     public Field[][] getBoard() {
         return board;
     }
