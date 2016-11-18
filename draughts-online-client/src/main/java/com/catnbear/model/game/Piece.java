@@ -2,63 +2,83 @@ package com.catnbear.model.game;
 
 import java.util.Observable;
 
+/**
+ * Piece's class. Extends an Observable class which allows it to be observed.
+ */
 public class Piece extends Observable {
 
-    enum PieceType {
-        NONE,
-        MEN,
-        KING
-    }
-
-    private PieceType type;
+    /**
+     * Piece's owner.
+     */
     private Player player;
-    private boolean selected;
+
+    /**
+     * Indicates if the piece is selectedFlag.
+     */
+    private boolean selectedFlag;
+
+    /**
+     * Assigned field.
+     */
     private Field field;
 
-    Piece(PieceType type, Player player) {
-        this.type = type;
+    /**
+     * Class' constructor.
+     * @param player Piece's owning player.
+     */
+    Piece(Player player) {
         this.player = player;
     }
 
+    /**
+     * Assigns the piece to the given field.
+     * @param field Field of the piece to be assigned to.
+     */
     void assignField(Field field) {
         if (this.field != null) {
-            this.field.resetPiece();
+            this.field.clearPiece();
         }
         this.field = field;
         this.field.setPiece(this);
     }
 
-    public Piece getCopy() {
-        Piece piece = new Piece(type,player);
-        piece.selected = selected;
+    /**
+     * Getter of the object's copy.
+     * @return A copy of the Piece object.
+     */
+    Piece getCopy() {
+        Piece piece = new Piece(player);
+        piece.selectedFlag = selectedFlag;
         return piece;
     }
 
+    /**
+     * Selects a piece.
+     */
     void select() {
-        selected = true;
+        selectedFlag = true;
     }
 
+    /**
+     * Unselects a piece.
+     */
     void unselect() {
-        selected = false;
+        selectedFlag = false;
     }
 
-    public boolean isSelected() {
-        return selected;
+    /**
+     * Flag indicating whether piece is selected.
+     * @return True if it is selected. False otherwise.
+     */
+    public boolean isSelectedFlag() {
+        return selectedFlag;
     }
 
-    public PieceType getType() {
-        return type;
-    }
-
-    public void setType(PieceType type) {
-        this.type = type;
-    }
-
+    /**
+     * Gets a player owning the piece.
+     * @return A player.
+     */
     public Player getPlayer() {
         return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 }

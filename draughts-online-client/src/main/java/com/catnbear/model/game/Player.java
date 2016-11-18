@@ -1,5 +1,8 @@
 package com.catnbear.model.game;
 
+/**
+ * Possible player choices.
+ */
 public enum Player {
     WHITE("White"),
     BLACK("Black"),

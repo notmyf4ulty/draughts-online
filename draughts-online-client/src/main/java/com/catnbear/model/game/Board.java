@@ -73,10 +73,10 @@ public class Board extends Observable {
             int playerOnePieceGenerationBorder = 2;
             int playerTwoPieceGenerationBorder = 2;
             if (position.getY() < playerOnePieceGenerationBorder) {
-                Piece piece = new Piece(Piece.PieceType.MEN, Player.WHITE);
+                Piece piece = new Piece(Player.WHITE);
                 piece.assignField(field);
             } else if (position.getY() > playerTwoPieceGenerationBorder) {
-                Piece piece = new Piece(Piece.PieceType.MEN, Player.BLACK);
+                Piece piece = new Piece(Player.BLACK);
                 piece.assignField(field);
             }
         }
@@ -117,7 +117,7 @@ public class Board extends Observable {
     private Field getFieldOfActivePiece() {
         for(Field [] fields : board) {
             for (Field field : fields) {
-                if (field.containsPiece() && field.isPieceSelcted()) {
+                if (field.containsPiece() && field.isPieceSelected()) {
                     return field;
                 }
             }
@@ -180,7 +180,7 @@ public class Board extends Observable {
      */
     private void movePiece(Field fromField, Field toField) {
         Piece piece = fromField.getPiece();
-        fromField.resetPiece();
+        fromField.clearPiece();
         toField.setPiece(piece);
         gameModel.setMoveAvailableFlag(false);
     }
@@ -197,7 +197,7 @@ public class Board extends Observable {
         Field enemyField = board[x][y];
         if (enemyField.containsPiece() &&
                 !enemyField.getPiece().getPlayer().equals(activePlayer)) {
-            enemyField.resetPiece();
+            enemyField.clearPiece();
             movePiece(fromField,toField);
             multiBeatModeFlag = isOpponentToBeatAround(toField);
             if (multiBeatModeFlag) {
@@ -361,11 +361,11 @@ public class Board extends Observable {
                     Field field = new Field(new Position(i, j));
                     switch (boardColumns[i].charAt(j)) {
                         case 'w':
-                            Piece whitePiece = new Piece(Piece.PieceType.MEN, Player.WHITE);
+                            Piece whitePiece = new Piece(Player.WHITE);
                             field.setPiece(whitePiece);
                             break;
                         case 'b':
-                            Piece blackPiece = new Piece(Piece.PieceType.MEN, Player.BLACK);
+                            Piece blackPiece = new Piece(Player.BLACK);
                             field.setPiece(blackPiece);
                             break;
                     }

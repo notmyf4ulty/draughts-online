@@ -49,7 +49,7 @@ class PieceShape extends Circle {
                 insideColor = "";
                 break;
         }
-        if (piece.isSelected()) {
+        if (piece.isSelectedFlag()) {
             boundsColor = "blue";
         } else {
             boundsColor = insideColor;
